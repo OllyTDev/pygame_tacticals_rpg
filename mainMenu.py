@@ -1,6 +1,3 @@
-#TODO
-# Turns
-
 import pygame
 import pygame_menu
 import mainGame
