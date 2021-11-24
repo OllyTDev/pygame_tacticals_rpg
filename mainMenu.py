@@ -1,7 +1,5 @@
 #TODO
 # Turns
-# Tiles & Map 
-# Units and buildings
 
 import pygame
 import pygame_menu
