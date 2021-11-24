@@ -8,14 +8,26 @@ from pygame.locals import (
 )
 
 #Following: https://realpython.com/pygame-a-primer/#basic-pygame-program
-#Next thing: https://stackoverflow.com/questions/12150957/pygame-action-when-mouse-click-on-rect
 
 squares = []
+xList, yList = [],[]
+
+def findCoordinate(coordinateList, target):
+    i = 0
+    revList = list(reversed(coordinateList))
+    print(revList)
+    while (i < len(revList)):
+        if(revList[i] < target):
+            return revList[i]
+        else: 
+            i = i + 1    
 
 def findSquareMouseIsOn(mousePos):
-    for square in squares:
-        if mousePos < square:
-            return square
+
+    xPos = findCoordinate(xList,mousePos[0])
+    yPos = findCoordinate(yList,mousePos[1])
+        
+    return (xPos, yPos)
 
 def initialMap(screen):
     buttons = []
@@ -36,13 +48,24 @@ def initialMap(screen):
             buttons.append(b)
             global squares
             squares.append((i,j))
+            createMapLists()
 
     pygame.display.flip()
     return buttons
 
+def createMapLists():
+    i = 0
+    tempXlist, tempYList = [],[]
+    global xList, yList
+    while (i < len(squares)):
+        tempXlist.append(squares[i][0])
+        tempYList.append(squares[i][1])
+        i = i + 1
+
+    xList = list(dict.fromkeys(tempXlist))
+    yList = list(dict.fromkeys(tempYList))
+
 def change_square(screen, x, y):
-    print("Got here")
-    print("X: ", x, " Y: ", y)
     surf = pygame.Surface((45, 45))
     surf.fill((255,0,0))
     screen.blit(surf,(x,y))
@@ -72,8 +95,6 @@ def main(screen):
                 ## check if cursor is on button ##
                 for b in buttons:
                     if b.collidepoint(pos):
-                        # pos is wrong here, we need to see where mouse pos is on what square
-                        # basically find which square the mouse is on and pass in those instead
                         squareClicked = findSquareMouseIsOn(pos)
                         change_square(screen,*squareClicked)    
         
