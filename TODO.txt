@@ -1,0 +1,5 @@
+TODO:
+Create map class
+    map is an array of tiles
+Create function to create tiles on a screen based on map class
+Turns

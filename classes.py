@@ -30,7 +30,6 @@ sand = terrain("sand", Yellow)
 print(grass.colour)
 print(sand.colour)
 
-
 class tile:
     """
     Tile class, contains location, occupied bool and terrain type. 
@@ -64,6 +63,14 @@ tileB.occupied = True
 print("tileA occ = ", tileA.occupied)
 print("tileB occ = ", tileB.occupied)
 
+class map:
+    """
+    A map should be an array of tiles
+    """
+    def __init__(self, tileArray):
+        self.tileArray = tileArray
+
+        
 
 class interactable:
     def __init__(self, name, hp=0, att=0, defence=0, location=[]):
