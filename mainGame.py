@@ -1,5 +1,5 @@
 import config
-
+from classes import colour
 import pygame
 from pygame.locals import (
     K_ESCAPE,
@@ -7,7 +7,9 @@ from pygame.locals import (
     QUIT,
 )
 
+
 #Following: https://realpython.com/pygame-a-primer/#basic-pygame-program
+
 
 squares = []
 xList, yList = [],[]
@@ -15,7 +17,6 @@ xList, yList = [],[]
 def findCoordinate(coordinateList, target):
     i = 0
     revList = list(reversed(coordinateList))
-    print(revList)
     while (i < len(revList)):
         if(revList[i] < target):
             return revList[i]
@@ -32,13 +33,13 @@ def findSquareMouseIsOn(mousePos):
 def initialMap(screen):
     buttons = []
     # Fill the screen with white
-    screen.fill((255, 255, 255))
+    screen.fill(colour.White)
     
     # Create a surface and pass in a tuple containing its length and width
     surf = pygame.Surface((45, 45))
     
     # Give the surface a color to separate it from the background
-    surf.fill((0, 0, 0))
+    surf.fill(colour.Black)
     surf.get_rect()
 
     # This line says "Draw surf onto the screen at the center"
@@ -52,6 +53,18 @@ def initialMap(screen):
 
     pygame.display.flip()
     return buttons
+
+def initialTacticsUI(screen):
+
+    pygame.draw.rect(screen, (colour.Black), (400, 5, 200, 35), 2)
+    pygame.display.update()
+    
+    #surf = pygame.Surface((300, 50))
+    #screen.blit(surf, (400,0))
+
+    font = pygame.font.SysFont('Arial', 25)
+    screen.blit(font.render('Next Turn', True, (colour.BurntUmber)), (440, 10))
+    pygame.display.update()
 
 def createMapLists():
     i = 0
@@ -76,6 +89,7 @@ def main(screen):
     running = True
     
     buttons = initialMap(screen)
+    initialTacticsUI(screen)
     # Main loop
     while running:
         # Look at every event in the queue
@@ -96,5 +110,7 @@ def main(screen):
                 for b in buttons:
                     if b.collidepoint(pos):
                         squareClicked = findSquareMouseIsOn(pos)
-                        change_square(screen,*squareClicked)    
+                        change_square(screen,*squareClicked)
+            elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
+                print("Left mouse released!")                
         

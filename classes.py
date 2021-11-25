@@ -2,10 +2,14 @@
 # Tiles & Map 
 # Units and buildings
 
-Red = (255,0,0)
-Green = (0, 255, 0)
-Blue = (0, 0, 255)
-Yellow = (255, 255, 0)
+class colour():
+    White = (255, 255, 255)
+    Black = (0, 0, 0)
+    Red = (255, 0, 0)
+    Green = (0, 255, 0)
+    Blue = (0, 0, 255)
+    Yellow = (255, 255, 0)
+    BurntUmber = (110,38,14)
 
 class terrain:
     """
@@ -25,8 +29,8 @@ class terrain:
         self.name = name
         self.colour = colour
 
-grass = terrain("grass", Green)
-sand = terrain("sand", Yellow)
+grass = terrain("grass", colour.Green)
+sand = terrain("sand", colour.Yellow)
 print(grass.colour)
 print(sand.colour)
 
