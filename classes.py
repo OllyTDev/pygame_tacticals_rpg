@@ -1,4 +1,5 @@
 
+import pygame
 # Tiles & Map 
 # Units and buildings
 
@@ -13,7 +14,7 @@ class colour():
 
 class terrain:
     """
-    Terrain bass class
+    Terrain base class
     Sets the base values for creating a new terrain type
     
     Parameters

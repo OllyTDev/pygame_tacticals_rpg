@@ -1,3 +1,4 @@
+from pygame import color, font
 import config
 from classes import colour
 import pygame
@@ -10,15 +11,17 @@ from pygame.locals import (
 
 #Following: https://realpython.com/pygame-a-primer/#basic-pygame-program
 
+pygame.init()
 
 squares = []
 xList, yList = [],[]
+gameFont = pygame.font.SysFont('Arial', 25)
 
 def findCoordinate(coordinateList, target):
     i = 0
     revList = list(reversed(coordinateList))
     while (i < len(revList)):
-        if(revList[i] < target):
+        if(revList[i] <= target):
             return revList[i]
         else: 
             i = i + 1    
@@ -29,6 +32,31 @@ def findSquareMouseIsOn(mousePos):
     yPos = findCoordinate(yList,mousePos[1])
         
     return (xPos, yPos)
+
+def buttonHit(buttonDimensions, mousePos):
+    """
+    check if a particular given button was hit
+
+    Parameters
+    ----------
+    buttonDimensions : Tuple [int, int, int, int]
+        should be (x: int, y: int, width: int, height: int)
+
+    mousePos: Tuple [int, int]
+        mousePos will be (x, y) coordinates    
+    """
+    mouseXPos = mousePos[0]
+    mouseYPos = mousePos[1]
+    buttonLeftPos = buttonDimensions[0]
+    buttonRightPos = buttonDimensions[0]+buttonDimensions[2]
+    buttonTopPos = buttonDimensions[1]
+    ButtonBottomPos = buttonDimensions[1]+buttonDimensions[3]
+
+    if (mouseXPos >= buttonLeftPos) & (mouseXPos <= buttonRightPos) & (mouseYPos >= buttonTopPos) & (mouseYPos <= ButtonBottomPos):
+        return True  
+    return False
+    
+
 
 def initialMap(screen):
     buttons = []
@@ -54,16 +82,10 @@ def initialMap(screen):
     pygame.display.flip()
     return buttons
 
-def initialTacticsUI(screen):
+def initialTacticsUI(screen, buttonSize=(545, 5, 200, 35)):
 
-    pygame.draw.rect(screen, (colour.Black), (400, 5, 200, 35), 2)
-    pygame.display.update()
-    
-    #surf = pygame.Surface((300, 50))
-    #screen.blit(surf, (400,0))
-
-    font = pygame.font.SysFont('Arial', 25)
-    screen.blit(font.render('Next Turn', True, (colour.BurntUmber)), (440, 10))
+    pygame.draw.rect(screen, (colour.Black), buttonSize, 2)
+    screen.blit(gameFont.render('Next Turn', True, (colour.BurntUmber)), (595, 10))
     pygame.display.update()
 
 def createMapLists():
@@ -84,12 +106,39 @@ def change_square(screen, x, y):
     screen.blit(surf,(x,y))
     pygame.display.flip()
 
+def startTurns(screen, starting_player):
+    playerText = gameFont.render("Player {0}".format(str(starting_player)), 1, colour.BurntUmber)
+    pygame.draw.rect(screen, (colour.Black), (50, 5, 200, 35), 2)
+    pygame.display.update()
+    screen.blit(playerText, (75,10))   
+    pygame.display.update()
+
+def changeTurns(screen, currentPlayersTurn, maxPlayers=2):
+    
+    pygame.draw.rect(screen, (colour.White), (50, 5, 200, 35), 0)
+    pygame.draw.rect(screen, (colour.Black), (50, 5, 200, 35), 2)
+    pygame.display.update()
+    if (currentPlayersTurn == maxPlayers):
+        nextPlayersTurn = 1
+    else:
+        nextPlayersTurn = currentPlayersTurn + 1    
+
+    playerText = gameFont.render("Player {0}".format(str(nextPlayersTurn)), 1, colour.BurntUmber)
+    screen.blit(playerText, (75,10))
+    pygame.display.update()
+    return nextPlayersTurn
+
+
 def main(screen):
     # Variable to keep the main loop running
     running = True
     
+    nextTurnButton = (545, 5, 200, 35)
     buttons = initialMap(screen)
-    initialTacticsUI(screen)
+    initialTacticsUI(screen, nextTurnButton)
+    currentPlayersTurn = 1
+    startTurns(screen, currentPlayersTurn)
+    
     # Main loop
     while running:
         # Look at every event in the queue
@@ -110,7 +159,12 @@ def main(screen):
                 for b in buttons:
                     if b.collidepoint(pos):
                         squareClicked = findSquareMouseIsOn(pos)
+                        print("squareClicked: ", str(squareClicked))
                         change_square(screen,*squareClicked)
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
-                print("Left mouse released!")                
+                pos = pygame.mouse.get_pos()
+                print("Left mouse released!")
+                if(buttonHit(nextTurnButton, pos)):
+                    currentPlayersTurn = changeTurns(screen, currentPlayersTurn)
+                            
         
