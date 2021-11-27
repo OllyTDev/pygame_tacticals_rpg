@@ -1,9 +1,2 @@
 TODO:
-Create map class
-    map is an array of tiles
-Create function to create tiles on a screen based on map class
-Turns
-
-Bugs:
-Can click in between tiles to not move
-    should move to the nearest available tiles
+Moved all over to: https://trello.com/b/USrzUzEu/pygame-tacticsrpg

@@ -1,4 +1,3 @@
-from pygame import color, font
 import config
 from classes import colour
 import pygame

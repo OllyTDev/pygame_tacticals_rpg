@@ -124,3 +124,9 @@ class unit(interactable):
 
 warrior = unit("Warrior", hp=50, att=20, defence=25)
 warrior.printStats()
+
+class player():
+    
+     def __init__(self, name, colour):
+        self.name = name
+        self.colour = colour
