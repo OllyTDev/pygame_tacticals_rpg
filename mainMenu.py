@@ -21,7 +21,7 @@ def main(screen):
                            theme=pygame_menu.themes.THEME_DEFAULT)
 
     menu.add.clock(align=pygame_menu.locals.ALIGN_RIGHT)
-    menu.add.vertical_margin(200)
+    menu.add.vertical_margin(250)
     menu.add.button('Story', start_the_game)
     menu.add.button('Skirmish', Skirmish)
     menu.add.button('Create Map', CreateMap)
