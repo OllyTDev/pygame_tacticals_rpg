@@ -1,4 +1,4 @@
-import config
+import loadConfig
 from classes import colour
 import pygame
 from pygame.locals import (
@@ -32,30 +32,6 @@ def findSquareMouseIsOn(mousePos):
         
     return (xPos, yPos)
 
-def buttonHit(buttonDimensions, mousePos):
-    """
-    check if a particular given button was hit
-
-    Parameters
-    ----------
-    buttonDimensions : Tuple [int, int, int, int]
-        should be (x: int, y: int, width: int, height: int)
-
-    mousePos: Tuple [int, int]
-        mousePos will be (x, y) coordinates    
-    """
-    mouseXPos = mousePos[0]
-    mouseYPos = mousePos[1]
-    buttonLeftPos = buttonDimensions[0]
-    buttonRightPos = buttonDimensions[0]+buttonDimensions[2]
-    buttonTopPos = buttonDimensions[1]
-    ButtonBottomPos = buttonDimensions[1]+buttonDimensions[3]
-
-    if (mouseXPos >= buttonLeftPos) & (mouseXPos <= buttonRightPos) & (mouseYPos >= buttonTopPos) & (mouseYPos <= ButtonBottomPos):
-        return True  
-    return False
-    
-
 
 def initialMap(screen):
     buttons = []
@@ -70,8 +46,8 @@ def initialMap(screen):
     surf.get_rect()
 
     # This line says "Draw surf onto the screen at the center"
-    for i in range (50, config.SCREEN_HEIGHT-50, 50):
-        for j in range (50, config.SCREEN_WIDTH-50, 50):
+    for i in range (50, loadConfig.SCREEN_HEIGHT-50, 50):
+        for j in range (50, loadConfig.SCREEN_WIDTH-50, 50):
             b = screen.blit(surf, (i,j))
             buttons.append(b)
             global squares
@@ -132,9 +108,11 @@ def main(screen):
     # Variable to keep the main loop running
     running = True
     
-    nextTurnButton = (545, 5, 200, 35)
-    buttons = initialMap(screen)
-    initialTacticsUI(screen, nextTurnButton)
+    nextTurnButtonSize = (545, 5, 200, 35)
+    nextTurnButton = pygame.draw.rect(screen, (colour.Black), nextTurnButtonSize, 2)
+
+    tiles = initialMap(screen)
+    initialTacticsUI(screen, nextTurnButtonSize)
     currentPlayersTurn = 1
     startTurns(screen, currentPlayersTurn)
     
@@ -155,15 +133,13 @@ def main(screen):
                 pos = pygame.mouse.get_pos()
                 print("mouse left clicked at ", pos)
                 ## check if cursor is on button ##
-                for b in buttons:
-                    if b.collidepoint(pos):
+                for t in tiles:
+                    if t.collidepoint(pos):
                         squareClicked = findSquareMouseIsOn(pos)
                         print("squareClicked: ", str(squareClicked))
                         change_square(screen,*squareClicked)
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                 pos = pygame.mouse.get_pos()
                 print("Left mouse released!")
-                if(buttonHit(nextTurnButton, pos)):
+                if nextTurnButton.collidepoint(pos):
                     currentPlayersTurn = changeTurns(screen, currentPlayersTurn)
-                            
-        
