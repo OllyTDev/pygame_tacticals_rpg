@@ -8,3 +8,5 @@ with open(osPath) as jsonFile:
     SCREEN_HEIGHT = data["SCREEN_HEIGHT"]
     global SCREEN_WIDTH
     SCREEN_WIDTH = data["SCREEN_WIDTH"]
+    global GAME_NAME
+    GAME_NAME = data["GAME_NAME"]
