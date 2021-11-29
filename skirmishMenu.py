@@ -52,12 +52,16 @@ def main(screen):
         return buttons
 
     def back_button():
-        pauseMenu.disable()
-        
+        global running
+        running = False
+
+    label = myfont.render("Back!", 1, colour.Black)
+    backButton = screen.blit(label, (100, 500))
+
     global players
     players = 2
     buttons = change_table()
-
+    global running
     running = True
     while running:
         for event in pygame.event.get():
@@ -70,6 +74,8 @@ def main(screen):
                 running = False
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 pos = pygame.mouse.get_pos()
+                if backButton.collidepoint(pos):
+                    running = False
                 for b in buttons:
                     if b.collidepoint(pos):
                         print("found a button?")
