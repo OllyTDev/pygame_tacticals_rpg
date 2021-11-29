@@ -11,6 +11,8 @@ class colour():
     Blue = (0, 0, 255)
     Yellow = (255, 255, 0)
     BurntUmber = (110,38,14)
+    LightBlue = (173,216,230)
+
 
 class terrain:
     """
