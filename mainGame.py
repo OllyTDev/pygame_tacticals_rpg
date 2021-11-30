@@ -1,6 +1,7 @@
 import loadConfig
 from classes import colour
 import pygame
+from drawFunctions import drawButton
 from pygame.locals import (
     K_ESCAPE,
     KEYDOWN,
@@ -57,12 +58,6 @@ def initialMap(screen):
     pygame.display.flip()
     return buttons
 
-def initialTacticsUI(screen, buttonSize=(545, 5, 200, 35)):
-
-    pygame.draw.rect(screen, (colour.Black), buttonSize, 2)
-    screen.blit(gameFont.render('Next Turn', True, (colour.BurntUmber)), (595, 10))
-    pygame.display.update()
-
 def createMapLists():
     i = 0
     tempXlist, tempYList = [],[]
@@ -106,16 +101,18 @@ def changeTurns(screen, currentPlayersTurn, maxPlayers=2):
 
 def main(screen):
     # Variable to keep the main loop running
-    running = True
     
-    nextTurnButtonSize = (545, 5, 200, 35)
-    nextTurnButton = pygame.draw.rect(screen, (colour.Black), nextTurnButtonSize, 2)
-
     tiles = initialMap(screen)
-    initialTacticsUI(screen, nextTurnButtonSize)
+
+    nextTurnButtonPosition = (545, 5)
+    nextTurnButtonSize = (200, 35)
+    nextTurnButton = drawButton(screen, "Next Turn", nextTurnButtonPosition, textColour=colour.BurntUmber, size=nextTurnButtonSize)
+    pygame.display.update()
+
     currentPlayersTurn = 1
     startTurns(screen, currentPlayersTurn)
     
+    running = True
     # Main loop
     while running:
         # Look at every event in the queue
