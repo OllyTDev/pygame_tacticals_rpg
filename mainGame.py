@@ -1,4 +1,4 @@
-from pygame.constants import K_DOWN, K_LEFT, K_RIGHT, K_UP, K_a, K_d, K_s, K_w
+from pygame.constants import K_DOWN, K_LEFT, K_RETURN, K_RIGHT, K_UP, K_a, K_d, K_s, K_w
 import loadConfig
 from classes import colour
 import pygame
@@ -187,7 +187,10 @@ def main(screen):
                     cursorPos = redrawCursor(screen, newPos, cursorPos)  
                 elif event.key == K_RIGHT or event.key == K_d:
                     newPos = checkNewCursorPos((cursorPos[0]+50,cursorPos[1]))
-                    cursorPos = redrawCursor(screen, newPos, cursorPos)        
+                    cursorPos = redrawCursor(screen, newPos, cursorPos)
+                elif event.key == K_RETURN:
+                     change_square(screen, *cursorPos)
+                     cursorPos = redrawCursor(screen, cursorPos, cursorPos)           
             # Did the user click the window close button? If so, stop the loop.
             elif event.type == QUIT:
                 running = False
