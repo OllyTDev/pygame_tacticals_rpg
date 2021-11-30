@@ -1,4 +1,4 @@
-from pygame.constants import K_DOWN, K_LEFT, K_RIGHT, K_UP
+from pygame.constants import K_DOWN, K_LEFT, K_RIGHT, K_UP, K_a, K_d, K_s, K_w
 import loadConfig
 from classes import colour
 import pygame
@@ -176,18 +176,17 @@ def main(screen):
                 # Was it the Escape key? If so, stop the loop.
                 if event.key == K_ESCAPE:
                     running = False
-                elif event.key == K_UP:
+                elif event.key == K_UP or event.key == K_w:
                     newPos = checkNewCursorPos((cursorPos[0],cursorPos[1]-50))
                     cursorPos = redrawCursor(screen, newPos, cursorPos)
-                elif event.key == K_DOWN:  
+                elif event.key == K_DOWN or event.key == K_s:  
                     newPos = checkNewCursorPos((cursorPos[0],cursorPos[1]+50))
                     cursorPos = redrawCursor(screen, newPos, cursorPos) 
-                elif event.key == K_LEFT:
+                elif event.key == K_LEFT or event.key == K_a:
                     newPos = checkNewCursorPos((cursorPos[0]-50,cursorPos[1]))
                     cursorPos = redrawCursor(screen, newPos, cursorPos)  
-                elif event.key == K_RIGHT:
+                elif event.key == K_RIGHT or event.key == K_d:
                     newPos = checkNewCursorPos((cursorPos[0]+50,cursorPos[1]))
-                    
                     cursorPos = redrawCursor(screen, newPos, cursorPos)        
             # Did the user click the window close button? If so, stop the loop.
             elif event.type == QUIT:
