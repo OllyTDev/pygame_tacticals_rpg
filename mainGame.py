@@ -1,3 +1,4 @@
+from pygame.constants import K_DOWN, K_LEFT, K_RIGHT, K_UP
 import loadConfig
 from classes import colour
 import pygame
@@ -16,6 +17,12 @@ pygame.init()
 squares = []
 xList, yList = [],[]
 gameFont = pygame.font.SysFont('Arial', 25)
+
+global xLeft, xRight, yTop, yBottom
+xLeft = 50
+xRight = loadConfig.SCREEN_WIDTH-50
+yTop = 50
+yBottom = loadConfig.SCREEN_HEIGHT-50
 
 def findCoordinate(coordinateList, target):
     i = 0
@@ -40,19 +47,20 @@ def initialMap(screen):
     screen.fill(colour.White)
     
     # Create a surface and pass in a tuple containing its length and width
-    surf = pygame.Surface((45, 45))
+    surf = pygame.Surface((50, 50))
     
     # Give the surface a color to separate it from the background
     surf.fill(colour.Black)
     surf.get_rect()
-
+    
+    global xLeft, xRight, yTop, yBottom
     # This line says "Draw surf onto the screen at the center"
-    for i in range (50, loadConfig.SCREEN_HEIGHT-50, 50):
-        for j in range (50, loadConfig.SCREEN_WIDTH-50, 50):
-            b = screen.blit(surf, (i,j))
+    for y in range (yTop, yBottom, 50):
+        for x in range (xLeft, xRight, 50):
+            b = screen.blit(surf, (x,y))
             buttons.append(b)
             global squares
-            squares.append((i,j))
+            squares.append((x,y))
             createMapLists()
 
     pygame.display.flip()
@@ -70,9 +78,9 @@ def createMapLists():
     xList = list(dict.fromkeys(tempXlist))
     yList = list(dict.fromkeys(tempYList))
 
-def change_square(screen, x, y):
-    surf = pygame.Surface((45, 45))
-    surf.fill((255,0,0))
+def change_square(screen, x, y, tileColour=(255,0,0)):
+    surf = pygame.Surface((50, 50))
+    surf.fill(tileColour)
     screen.blit(surf,(x,y))
     pygame.display.flip()
 
@@ -98,6 +106,49 @@ def changeTurns(screen, currentPlayersTurn, maxPlayers=2):
     pygame.display.update()
     return nextPlayersTurn
 
+def initializeCursor(screen):
+    cursorPos = (50,50)
+    cursorImg = pygame.image.load("Asset\Cursor.png")
+    screen.blit(cursorImg, (50,50))
+    return cursorPos
+    
+def redrawCursor(screen, newPos, oldPos):
+    #from oldPos, find tile, find tile colour, fill in tile with tile colour
+    oldColour = colour.Black
+    change_square(screen, *oldPos, oldColour)
+    cursorImg = pygame.image.load("Asset\Cursor.png")
+    screen.blit(cursorImg, newPos)
+    pygame.display.update()
+    return newPos
+
+def checkNewCursorPos(pos):
+    print(pos)
+    xPos = pos[0]
+    yPos = pos[1]
+    global xLeft, xRight, yTop, yBottom
+    mapLeft = xLeft
+    mapRight = xRight-50
+    mapTop = yTop
+    mapBottom = yBottom-50
+    if(xPos < mapLeft):
+        print("going off the left of the screen")
+        #going off the left of the screen
+        pos = (xLeft, yPos)
+    elif (xPos > mapRight):
+        print("going off right of screen")
+        #going off right of screen
+        pos = (mapRight, yPos)
+    elif (yPos < mapTop):
+        print("going off top of screen")
+        #going off top of screen
+        pos = (xPos, yTop)
+    elif (yPos > mapBottom):
+        print("going off bottom of screen")
+        #going off bottom of screen   
+        pos = (xPos, mapBottom)
+    
+    return(pos)
+
 
 def main(screen):
     # Variable to keep the main loop running
@@ -112,6 +163,9 @@ def main(screen):
     currentPlayersTurn = 1
     startTurns(screen, currentPlayersTurn)
     
+    cursorPos = initializeCursor(screen)
+    pygame.display.update()
+
     running = True
     # Main loop
     while running:
@@ -122,6 +176,19 @@ def main(screen):
                 # Was it the Escape key? If so, stop the loop.
                 if event.key == K_ESCAPE:
                     running = False
+                elif event.key == K_UP:
+                    newPos = checkNewCursorPos((cursorPos[0],cursorPos[1]-50))
+                    cursorPos = redrawCursor(screen, newPos, cursorPos)
+                elif event.key == K_DOWN:  
+                    newPos = checkNewCursorPos((cursorPos[0],cursorPos[1]+50))
+                    cursorPos = redrawCursor(screen, newPos, cursorPos) 
+                elif event.key == K_LEFT:
+                    newPos = checkNewCursorPos((cursorPos[0]-50,cursorPos[1]))
+                    cursorPos = redrawCursor(screen, newPos, cursorPos)  
+                elif event.key == K_RIGHT:
+                    newPos = checkNewCursorPos((cursorPos[0]+50,cursorPos[1]))
+                    
+                    cursorPos = redrawCursor(screen, newPos, cursorPos)        
             # Did the user click the window close button? If so, stop the loop.
             elif event.type == QUIT:
                 running = False
@@ -135,6 +202,7 @@ def main(screen):
                         squareClicked = findSquareMouseIsOn(pos)
                         print("squareClicked: ", str(squareClicked))
                         change_square(screen,*squareClicked)
+                        cursorPos = redrawCursor(screen, squareClicked, cursorPos)
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                 pos = pygame.mouse.get_pos()
                 print("Left mouse released!")
