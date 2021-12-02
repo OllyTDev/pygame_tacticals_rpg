@@ -1,5 +1,5 @@
 
-import pygame
+import terrains
 # Tiles & Map 
 # Units and buildings
 
@@ -13,31 +13,7 @@ class colour():
     BurntUmber = (110,38,14)
     LightBlue = (173,216,230)
 
-
-class terrain:
-    """
-    Terrain base class
-    Sets the base values for creating a new terrain type
-    
-    Parameters
-    ----------
-    name : string
-        the name of the particular terrain created
-    colour : (int, int, int)
-        Takes the colour as (red, green, blue)
-        Only used in the base program for debugging     
-
-    """
-    def __init__(self, name, colour):
-        self.name = name
-        self.colour = colour
-
-grass = terrain("grass", colour.Green)
-sand = terrain("sand", colour.Yellow)
-print(grass.colour)
-print(sand.colour)
-
-class tile:
+class Tile:
     """
     Tile class, contains location, occupied bool and terrain type. 
     
@@ -57,29 +33,20 @@ class tile:
         The type of terrain the tile is
         Defaults to grass         
     """
-    def __init__(self, x = -1, y = -1):
+    def __init__(self, x = -1, y = -1, terrain=terrains.grass):
         self.x = x
         self.y = y
         self.occupied = False
-        self.terrain = grass
+        self.terrain = terrain
 
-tileA = tile(0,0)
-print("tileA occ = ", tileA.occupied)
-tileB = tile(0,1)
-tileB.occupied = True
-print("tileA occ = ", tileA.occupied)
-print("tileB occ = ", tileB.occupied)
-
-class map:
+class Map:
     """
     A map should be an array of tiles
     """
     def __init__(self, tileArray):
         self.tileArray = tileArray
 
-        
-
-class interactable:
+class Interactable:
     def __init__(self, name, hp=0, att=0, defence=0, location=[]):
         self.name = name
         self.baseHP = hp
@@ -98,36 +65,35 @@ class interactable:
 
 
 
-class building(interactable):
+class Building(Interactable):
     def __init__(self, name, xSize, ySize, hp=0, att=0, defence=0, location=[]):
-        interactable.__init__(self, name, hp, att, defence, location)
+        Interactable.__init__(self, name, hp, att, defence, location)
         self.xSize = xSize
         self.ySize = ySize
         self.size = [xSize, ySize] 
 
 
     
-house = building("house", 2, 2, hp=200, defence=50)
-castle = building("castle", 4, 8, hp=500, defence=200)
-castle.location = [tileA, tileB]
+house = Building("house", 2, 2, hp=200, defence=50)
+castle = Building("castle", 4, 8, hp=500, defence=200)
 house.printStats()
 print("House location: " + str(house.location))
 castle.printStats()
 print("castle location: " + str(castle.location))
 
 
-class unit(interactable):
+class Unit(Interactable):
     def __init__(self, name,hp=0, att=0, defence=0, location=[]):
-       interactable.__init__(self, name, hp, att, defence, location)
+       Interactable.__init__(self, name, hp, att, defence, location)
        self.abilities = []
 
     def add_ability(self, ability):
         self.abilities.append(ability)
 
-warrior = unit("Warrior", hp=50, att=20, defence=25)
+warrior = Unit("Warrior", hp=50, att=20, defence=25)
 warrior.printStats()
 
-class player():
+class Player():
     
      def __init__(self, name, colour):
         self.name = name
