@@ -36,6 +36,7 @@ class Tile:
     def __init__(self, x = -1, y = -1, terrain=terrains.grass):
         self.x = x
         self.y = y
+        self.pos = [x,y]
         self.occupied = False
         self.terrain = terrain
 

@@ -38,7 +38,7 @@ def findSquareMouseIsOn(mousePos):
     xPos = findCoordinate(xList,mousePos[0])
     yPos = findCoordinate(yList,mousePos[1])
         
-    return (xPos, yPos)
+    return [xPos, yPos]
 
 def drawTile(screen, tile):
     tilePos = [tile.x, tile.y]
@@ -69,7 +69,7 @@ def initialGridmap(screen):
     surf = pygame.Surface((50, 50))
     
     # Give the surface a color to separate it from the background
-    surf.fill(colour.White)
+    surf.fill(colour.Black)
     surf.get_rect()
     
     global xLeft, xRight, yTop, yBottom
@@ -97,12 +97,6 @@ def createMapLists():
     xList = list(dict.fromkeys(tempXlist))
     yList = list(dict.fromkeys(tempYList))
 
-def change_square(screen, x, y, tileColour=(255,0,0)):
-    surf = pygame.Surface((50, 50))
-    surf.fill(tileColour)
-    screen.blit(surf,(x,y))
-    pygame.display.flip()
-
 def startTurns(screen, starting_player):
     playerText = gameFont.render("Player {0}".format(str(starting_player)), 1, colour.BurntUmber)
     pygame.draw.rect(screen, (colour.Black), (50, 5, 200, 35), 2)
@@ -125,23 +119,40 @@ def changeTurns(screen, currentPlayersTurn, maxPlayers=2):
     pygame.display.update()
     return nextPlayersTurn
 
+def findTileOnMap(targetPos, map):
+    for tile in map.tileArray:
+        if (tile.pos == targetPos):
+            return tile
+
+
+#function might be useful for drawing a tileSized square on screen
+def change_square(screen, x, y, tileColour=(255,0,0)):
+    surf = pygame.Surface((50, 50))
+    surf.fill(tileColour)
+    screen.blit(surf,(x,y))
+    pygame.display.flip()
+
 def initializeCursor(screen):
-    cursorPos = (50,50)
+    cursorPos = [50,50]
     cursorImg = pygame.image.load("Asset\Cursor.png")
     screen.blit(cursorImg, (50,50))
     return cursorPos
-    
-def redrawCursor(screen, newPos, oldPos):
-    #from oldPos, find tile, find tile image, fill in tile with tile colour
 
-    change_square(screen, *oldPos, oldColour)
+    
+def redrawCursor(screen, newPos, oldPos, map):
+    #from oldPos, find tile, find tile image, fill in tile with tile image
+    tile = findTileOnMap(oldPos, map)
+    tileImage = pygame.image.load(tile.terrain.image)
+    screen.blit(tileImage, oldPos)
+
+    #then draw the cursor at the new position
     cursorImg = pygame.image.load("Asset\Cursor.png")
     screen.blit(cursorImg, newPos)
     pygame.display.update()
     return newPos
 
 def checkNewCursorPos(pos):
-    print(pos)
+    
     xPos = pos[0]
     yPos = pos[1]
     global xLeft, xRight, yTop, yBottom
@@ -150,30 +161,30 @@ def checkNewCursorPos(pos):
     mapTop = yTop
     mapBottom = yBottom-50
     if(xPos < mapLeft):
-        print("going off the left of the screen")
         #going off the left of the screen
-        pos = (xLeft, yPos)
+        pos = [xLeft, yPos]
     elif (xPos > mapRight):
-        print("going off right of screen")
         #going off right of screen
-        pos = (mapRight, yPos)
+        pos = [mapRight, yPos]
     elif (yPos < mapTop):
-        print("going off top of screen")
         #going off top of screen
-        pos = (xPos, yTop)
+        pos = [xPos, yTop]
     elif (yPos > mapBottom):
-        print("going off bottom of screen")
         #going off bottom of screen   
-        pos = (xPos, mapBottom)
-    
-    return(pos)
+        pos = [xPos, mapBottom]
+
+    return pos
 
 import maps
 def main(screen):
     # Variable to keep the main loop running
-    tiles = loadMap(screen, maps.grassMap)
+   
+    #currentMap = maps.grassMap
+    currentMap = maps.sandMap
+
+    tiles = loadMap(screen, currentMap)
     
-    #tiles = initialMap(screen)
+    #tiles = initialGridmap(screen)
 
     nextTurnButtonPosition = (545, 5)
     nextTurnButtonSize = (200, 35)
@@ -197,20 +208,25 @@ def main(screen):
                 if event.key == K_ESCAPE:
                     running = False
                 elif event.key == K_UP or event.key == K_w:
-                    newPos = checkNewCursorPos((cursorPos[0],cursorPos[1]-50))
-                    cursorPos = redrawCursor(screen, newPos, cursorPos)
+                    newPos = checkNewCursorPos([cursorPos[0],cursorPos[1]-50])
+                    redrawCursor(screen, newPos, cursorPos, currentMap)
+                    cursorPos = newPos
                 elif event.key == K_DOWN or event.key == K_s:  
-                    newPos = checkNewCursorPos((cursorPos[0],cursorPos[1]+50))
-                    cursorPos = redrawCursor(screen, newPos, cursorPos) 
+                    newPos = checkNewCursorPos([cursorPos[0],cursorPos[1]+50])
+                    redrawCursor(screen, newPos, cursorPos, currentMap)
+                    cursorPos = newPos
                 elif event.key == K_LEFT or event.key == K_a:
-                    newPos = checkNewCursorPos((cursorPos[0]-50,cursorPos[1]))
-                    cursorPos = redrawCursor(screen, newPos, cursorPos)  
+                    newPos = checkNewCursorPos([cursorPos[0]-50,cursorPos[1]])
+                    redrawCursor(screen, newPos, cursorPos, currentMap)
+                    cursorPos = newPos
                 elif event.key == K_RIGHT or event.key == K_d:
-                    newPos = checkNewCursorPos((cursorPos[0]+50,cursorPos[1]))
-                    cursorPos = redrawCursor(screen, newPos, cursorPos)
+                    newPos = checkNewCursorPos([cursorPos[0]+50,cursorPos[1]])
+                    redrawCursor(screen, newPos, cursorPos, currentMap)
+                    cursorPos = newPos
                 elif event.key == K_RETURN:
-                     change_square(screen, *cursorPos)
-                     cursorPos = redrawCursor(screen, cursorPos, cursorPos)           
+                    change_square(screen, *cursorPos)
+                    redrawCursor(screen, newPos, cursorPos, currentMap)
+                    cursorPos = newPos
             # Did the user click the window close button? If so, stop the loop.
             elif event.type == QUIT:
                 running = False
@@ -224,7 +240,8 @@ def main(screen):
                         squareClicked = findSquareMouseIsOn(pos)
                         print("squareClicked: ", str(squareClicked))
                         change_square(screen,*squareClicked)
-                        cursorPos = redrawCursor(screen, squareClicked, cursorPos)
+                        redrawCursor(screen, squareClicked, cursorPos, currentMap)
+                        cursorPos = squareClicked
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                 pos = pygame.mouse.get_pos()
                 print("Left mouse released!")

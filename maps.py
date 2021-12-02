@@ -15,8 +15,6 @@ for y in range (yTop, yBottom, 50):
             tileArray.append(tile)
      
 grassMap = classes.Map(tileArray) 
-for tile in grassMap.tileArray:
-    print(tile.terrain.name)
 
 tileArray = []
 for y in range (yTop, yBottom, 50):
