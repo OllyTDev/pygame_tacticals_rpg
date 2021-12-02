@@ -1,6 +1,6 @@
 from pygame.constants import K_DOWN, K_LEFT, K_RETURN, K_RIGHT, K_UP, K_a, K_d, K_s, K_w
 import loadConfig
-from classes import colour
+from classes import colour, Map
 import pygame
 from drawFunctions import drawButton
 from pygame.locals import (
@@ -40,8 +40,27 @@ def findSquareMouseIsOn(mousePos):
         
     return (xPos, yPos)
 
+def drawTile(screen, tile):
+    tilePos = [tile.x, tile.y]
+    tileImage = pygame.image.load(tile.terrain.image)
+    screen.blit(tileImage, tilePos)
+   
 
-def initialMap(screen):
+def loadMap(screen, map):
+    buttons = []
+    buttons = initialGridmap(screen)
+    # Fill the screen with white
+    screen.fill(colour.White)
+    
+    #for each tile in the map
+    #draw the tile
+    for tile in map.tileArray:
+        drawTile(screen,tile)
+
+    pygame.display.flip()
+    return buttons
+
+def initialGridmap(screen):
     buttons = []
     # Fill the screen with white
     screen.fill(colour.White)
@@ -50,7 +69,7 @@ def initialMap(screen):
     surf = pygame.Surface((50, 50))
     
     # Give the surface a color to separate it from the background
-    surf.fill(colour.Black)
+    surf.fill(colour.White)
     surf.get_rect()
     
     global xLeft, xRight, yTop, yBottom
@@ -113,8 +132,8 @@ def initializeCursor(screen):
     return cursorPos
     
 def redrawCursor(screen, newPos, oldPos):
-    #from oldPos, find tile, find tile colour, fill in tile with tile colour
-    oldColour = colour.Black
+    #from oldPos, find tile, find tile image, fill in tile with tile colour
+
     change_square(screen, *oldPos, oldColour)
     cursorImg = pygame.image.load("Asset\Cursor.png")
     screen.blit(cursorImg, newPos)
@@ -149,11 +168,12 @@ def checkNewCursorPos(pos):
     
     return(pos)
 
-
+import maps
 def main(screen):
     # Variable to keep the main loop running
+    tiles = loadMap(screen, maps.grassMap)
     
-    tiles = initialMap(screen)
+    #tiles = initialMap(screen)
 
     nextTurnButtonPosition = (545, 5)
     nextTurnButtonSize = (200, 35)
