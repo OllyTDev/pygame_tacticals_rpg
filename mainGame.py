@@ -1,6 +1,7 @@
 from pygame.constants import K_DOWN, K_LEFT, K_RETURN, K_RIGHT, K_UP, K_a, K_d, K_s, K_w
 import loadConfig
-from classes import colour, Map
+import maps
+from classes import colour
 import pygame
 from drawFunctions import drawButton
 from pygame.locals import (
@@ -175,7 +176,7 @@ def checkNewCursorPos(pos):
 
     return pos
 
-import maps
+
 def main(screen):
     # Variable to keep the main loop running
    
