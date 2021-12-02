@@ -225,6 +225,10 @@ def main(screen):
                     redrawCursor(screen, newPos, cursorPos, currentMap)
                     cursorPos = newPos
                 elif event.key == K_RETURN:
+                    #logic here is a bit skewed, currently change_square would introduce 
+                    # the highlighting required ready for transparent selection effect 
+                    # however we are then immediately redrawing the cursor with the tiles 
+                    # original image on top, definitely need to think about how to do selection
                     change_square(screen, *cursorPos)
                     redrawCursor(screen, newPos, cursorPos, currentMap)
                     cursorPos = newPos
