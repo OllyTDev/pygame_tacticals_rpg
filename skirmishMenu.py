@@ -2,7 +2,7 @@ import pygame
 import mainGame
 import maps
 from classes import colour
-from drawFunctions import column, drawButton, drawTable
+from drawFunctions import column, row, drawButton, drawTable
 from pygame.locals import (
     K_ESCAPE,
     KEYDOWN,
@@ -23,54 +23,20 @@ def main(screen):
     myfont = pygame.font.SysFont("Arial", 15)
     screen.fill(colour.LightBlue)
 
-    global tableCurrentRows
-    tableCurrentRows = 1
     def intialClassTables():
-        skirmishColumns = [column("Colour",(colour)), column("Player"), column("Faction"), column("Team")]
-        drawTable(screen,skirmishColumns,"",(100,100))
+        skirmishColumns = [column("Colour",(colour), buffer_X=10), column("Player", buffer_X=75), column("Faction", buffer_X=75), column("Team")]
+                    
+        values = [("Colour",(colour.Red)), ("Player", "Player1"), ("Faction", "Faction1"), ("Team", "team1") ]
+        values2 = [("Colour",(colour.Blue)), ("Player", "Player2"), ("Faction", "Faction2"), ("Team", "team2") ]
+        row1 = row()
+        row1.addData(values)
+        row2 = row()
+        row2.addData(values2)
+        rows = [row1, row2]
+
+        drawTable(screen, skirmishColumns, rows, (100,100))
         pygame.display.update()
 
-    def initialTable():
-        i = 0 
-        while (i < 4):
-            i = i + 1
-            match i:
-                case 1:
-                    drawButton(screen, "Colour", (((100*i), 100)),size=[150,25])
-                    #label = myfont.render("Colour", 1, colour.Black)
-                    #screen.blit(label, (100+(100*i), 100))
-                case 2:
-                    label = myfont.render("Player", 1, colour.Black)
-                    screen.blit(label, (100+(100*i), 100))
-                case 3:
-                    label = myfont.render("Faction", 1, colour.Black)
-                    screen.blit(label, (100+(100*i), 100))   
-                case 4:
-                    label = myfont.render("Team", 1, colour.Black)
-                    screen.blit(label, (100+(100*i), 100))
-                case _:
-                    return   
-            pygame.display.update()           
-
-    def change_table():
-        
-        buttons = []
-        print("Change table")
-        global players
-        print(players)
-        global tableCurrentRows
-
-        while (tableCurrentRows <= int(players)):
-            entry = 0
-            while (entry <= 2):
-                label = myfont.render("Test!", 1, colour.Black)
-                b = screen.blit(label, (100+(100*entry), 100+(tableCurrentRows*100)))
-                buttons.append(b)
-                entry = entry+1
-            tableCurrentRows = tableCurrentRows + 1        
-
-        pygame.display.update() 
-        return buttons
 
     defaultButtonSize = [200, 35]
     startButton = drawButton(screen, "Start", (500, 500), size = defaultButtonSize)

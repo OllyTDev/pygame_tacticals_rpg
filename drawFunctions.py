@@ -5,9 +5,9 @@ from classes import colour
 pygame.init()
 myfont = pygame.font.SysFont("Arial", 25)
 
-def checkTextSize(text, bufferX, bufferY):
+def checkTextSize(text, buffer_X, buffer_Y):
     text_width, text_height = myfont.size(text)
-    return [text_width+bufferX, text_height+bufferY]
+    return [text_width+buffer_X, text_height+buffer_Y]
 
 def drawButton(
     screen, 
@@ -16,8 +16,8 @@ def drawButton(
     textColour=colour.Black,
     buttonColour=colour.Black,
     size=[0,0],
-    bufferX = 25,
-    bufferY = 10
+    buffer_X = 25,
+    buffer_Y = 10
     ):
     """
     Function to help creation consitent buttons
@@ -44,7 +44,7 @@ def drawButton(
         Length and size of button, defaults to be calculated if no size given
     """
     
-    calculatedSize = checkTextSize(text,bufferX,bufferY)
+    calculatedSize = checkTextSize(text,buffer_X,buffer_Y)
     if (size == [0,0]):
         size = calculatedSize
 
@@ -55,11 +55,11 @@ def drawButton(
     return button
 
 class column():
-    def __init__(self, header, type="str"):
+    def __init__(self, header, type="str", buffer_X = 25, buffer_Y = 10):
         self.header = header
         self.type = type
-
-skirmishColumns = [column("Colour",(colour)), column("Player"), column("Faction"), column("Team")]
+        self.buffer_X = buffer_X
+        self.buffer_Y = buffer_Y
 
 class row():
     def __init__(self):
@@ -69,12 +69,6 @@ class row():
         for pair in keyValues:
             self.data.update({pair[0]:pair[1]})
             
-values = [("Colour",(colour.Red)), ("Player", "Player1"), ("Faction", "Faction1"), ("Team", "team1") ]
-values2 = [("Colour",(colour.Blue)), ("Player", "Player2"), ("Faction", "Faction2"), ("Team", "team2") ]
-row1 = row().addData(values)
-row2 = row().addData(values)
-rows = [row1, row2]
-
 
 def drawTable(screen, columns, rows, position):
     """
@@ -96,10 +90,29 @@ def drawTable(screen, columns, rows, position):
         Position to start drawing the table at
         stored as (x, y)  
     """
-    print("DrawTable function")
-    currentXDrawPos = position[0]
 
+    currentXDrawPos = position[0]
+    columnStartPositions_X = {}
+    buttons = []
     for column in columns:
         print("Draw the column:", column)
-        b = drawButton(screen, column.header, (currentXDrawPos, position[1]))
-        currentXDrawPos = currentXDrawPos + b.size[0] 
+        b = drawButton(screen, column.header, (currentXDrawPos, position[1]), buffer_X=column.buffer_X, buffer_Y=column.buffer_Y)
+        buttons.append(b)
+        columnStartPositions_X.update({column.header: currentXDrawPos}) # Gonna give us data like: colour: 185 & faction: 491
+        currentXDrawPos = currentXDrawPos + b.size[0] - 1
+    currentRowYPos = position[1] + b.size[1] - 1
+
+    # currentColumnYPos is Y value to start at
+    # columnStartPositions_X is X value to start at for each column
+    
+    for row in rows:
+        print("row.data:",row.data)
+        for key, value in row.data.items():
+            #dataPoint in the data so (column.header: item)
+            #take data point .key and find it in columnStartPosition_X and return the item
+            print(key,":",value)
+            print("x value for ", key, ":",columnStartPositions_X[key])
+            print("y value for ", key, ":",currentRowYPos)
+            pos = [columnStartPositions_X[key], currentRowYPos] 
+            b = drawButton(screen, str(value), pos) #str value isn't right for everything, need to adjust
+        currentRowYPos = currentRowYPos + b.size[1] - 1
