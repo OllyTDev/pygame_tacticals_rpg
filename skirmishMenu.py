@@ -24,7 +24,7 @@ def main(screen):
     screen.fill(colour.LightBlue)
 
     def intialClassTables():
-        skirmishColumns = [column("Colour",(colour), buffer_X=10), column("Player", buffer_X=75), column("Faction", buffer_X=75), column("Team")]
+        skirmishColumns = [column("Colour",(colour), buffer_X=10), column("Player", buffer_X=75), column("Faction", buffer_X=75), column("Team", buffer_X=50)]
                     
         values = [("Colour",(colour.Red)), ("Player", "Player1"), ("Faction", "Faction1"), ("Team", "team1") ]
         values2 = [("Colour",(colour.Blue)), ("Player", "Player2"), ("Faction", "Faction2"), ("Team", "team2") ]
