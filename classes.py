@@ -85,8 +85,8 @@ print("castle location: " + str(castle.location))
 
 class Unit(Interactable):
     def __init__(self, name,hp=0, att=0, defence=0, location=[]):
-       Interactable.__init__(self, name, hp, att, defence, location)
-       self.abilities = []
+        Interactable.__init__(self, name, hp, att, defence, location)
+        self.abilities = []
 
     def add_ability(self, ability):
         self.abilities.append(ability)
@@ -96,6 +96,7 @@ warrior.printStats()
 
 class Player():
     
-     def __init__(self, name, colour):
+     def __init__(self, name, colour, team):
         self.name = name
         self.colour = colour
+        self.team = team

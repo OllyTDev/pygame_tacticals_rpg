@@ -1,10 +1,8 @@
 import pygame
-from pygame import surface
-import pygame_menu
-import loadConfig
-from mainGame import changeTurns
+import mainGame
+import maps
 from classes import colour
-from drawFunctions import drawButton
+from drawFunctions import column, drawButton, drawTable
 from pygame.locals import (
     K_ESCAPE,
     KEYDOWN,
@@ -13,22 +11,46 @@ from pygame.locals import (
 
 pygame.init()
 
+def start(screen):
+    mainGame.main(screen, maps.grassMap)
 
-
+def quit():
+    global running
+    running = False
 
 def main(screen):
 
-    
-
-    myfont = pygame.font.SysFont("monospace", 15)
+    myfont = pygame.font.SysFont("Arial", 15)
     screen.fill(colour.LightBlue)
-
-    def start_the_game():
-        change_table()
-        #Confirm before start
 
     global tableCurrentRows
     tableCurrentRows = 1
+    def intialClassTables():
+        skirmishColumns = [column("Colour",(colour)), column("Player"), column("Faction"), column("Team")]
+        drawTable(screen,skirmishColumns,"",(100,100))
+        pygame.display.update()
+
+    def initialTable():
+        i = 0 
+        while (i < 4):
+            i = i + 1
+            match i:
+                case 1:
+                    drawButton(screen, "Colour", (((100*i), 100)),size=[150,25])
+                    #label = myfont.render("Colour", 1, colour.Black)
+                    #screen.blit(label, (100+(100*i), 100))
+                case 2:
+                    label = myfont.render("Player", 1, colour.Black)
+                    screen.blit(label, (100+(100*i), 100))
+                case 3:
+                    label = myfont.render("Faction", 1, colour.Black)
+                    screen.blit(label, (100+(100*i), 100))   
+                case 4:
+                    label = myfont.render("Team", 1, colour.Black)
+                    screen.blit(label, (100+(100*i), 100))
+                case _:
+                    return   
+            pygame.display.update()           
 
     def change_table():
         
@@ -50,15 +72,14 @@ def main(screen):
         pygame.display.update() 
         return buttons
 
-    def quit():
-        global running
-        running = False
-
-    backButton = drawButton(screen, "Back",  (100, 500))
+    defaultButtonSize = [200, 35]
+    startButton = drawButton(screen, "Start", (500, 500), size = defaultButtonSize)
+    backButton = drawButton(screen, "Back",  (100, 500), size = defaultButtonSize)
 
     global players
     players = 2
-    buttons = change_table()
+    intialClassTables()
+    #initialTable()
     global running
     running = True
     while running:
@@ -74,9 +95,11 @@ def main(screen):
                 pos = pygame.mouse.get_pos()
                 if backButton.collidepoint(pos):
                     quit()
-                for b in buttons:
-                    if b.collidepoint(pos):
-                        print("found a button?")
+                elif startButton.collidepoint(pos):
+                    start(screen)    
+                #for b in buttons:
+                #    if b.collidepoint(pos):
+                #        print("found a button?")
     
         
 
