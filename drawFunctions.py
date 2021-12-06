@@ -92,27 +92,26 @@ def drawTable(screen, columns, rows, position):
     """
 
     currentXDrawPos = position[0]
-    columnStartPositions_X = {}
+    columnStartandSize_X = {}
     buttons = []
     for column in columns:
-        print("Draw the column:", column)
         b = drawButton(screen, column.header, (currentXDrawPos, position[1]), buffer_X=column.buffer_X, buffer_Y=column.buffer_Y)
         buttons.append(b)
-        columnStartPositions_X.update({column.header: currentXDrawPos}) # Gonna give us data like: colour: 185 & faction: 491
+        columnStartandSize_X.update({column.header: (currentXDrawPos, b.width)}) # Gonna give us data like: colour: 185 & faction: 491
         currentXDrawPos = currentXDrawPos + b.size[0] - 1
     currentRowYPos = position[1] + b.size[1] - 1
 
     # currentColumnYPos is Y value to start at
     # columnStartPositions_X is X value to start at for each column
-    
+
     for row in rows:
         print("row.data:",row.data)
         for key, value in row.data.items():
             #dataPoint in the data so (column.header: item)
             #take data point .key and find it in columnStartPosition_X and return the item
             print(key,":",value)
-            print("x value for ", key, ":",columnStartPositions_X[key])
-            print("y value for ", key, ":",currentRowYPos)
-            pos = [columnStartPositions_X[key], currentRowYPos] 
-            b = drawButton(screen, str(value), pos) #str value isn't right for everything, need to adjust
+            print(columnStartandSize_X[key][0],":",columnStartandSize_X[key][1])
+            pos = [columnStartandSize_X[key][0], currentRowYPos] 
+            calcedSize = checkTextSize(str(value), 25, 10)
+            b = drawButton(screen, str(value), pos, size=(columnStartandSize_X[key][1],calcedSize[1])) #x is whatever the x values of the column is , y is calculated
         currentRowYPos = currentRowYPos + b.size[1] - 1

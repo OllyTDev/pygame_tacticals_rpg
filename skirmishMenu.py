@@ -12,7 +12,8 @@ from pygame.locals import (
 pygame.init()
 
 def start(screen):
-    mainGame.main(screen, maps.grassMap)
+    mainGame.main(screen, maps.sandMap)
+    #mainGame.main(screen, maps.grassMap)
 
 def quit():
     global running
