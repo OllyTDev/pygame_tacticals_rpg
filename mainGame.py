@@ -1,6 +1,5 @@
 from pygame.constants import K_DOWN, K_LEFT, K_RETURN, K_RIGHT, K_UP, K_a, K_d, K_s, K_w
 import loadConfig
-import maps
 from classes import colour
 import pygame
 from drawFunctions import drawButton
@@ -9,9 +8,6 @@ from pygame.locals import (
     KEYDOWN,
     QUIT,
 )
-
-
-#Following: https://realpython.com/pygame-a-primer/#basic-pygame-program
 
 pygame.init()
 

@@ -20,8 +20,7 @@ def quit():
     running = False
 
 def main(screen):
-
-    myfont = pygame.font.SysFont("Arial", 15)
+    
     screen.fill(colour.LightBlue)
     
     tableEmptyValue = [("Colour",(colour.Black)), ("Player", ""), ("Faction", ""), ("Team", "") ]

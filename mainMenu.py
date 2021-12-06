@@ -1,9 +1,7 @@
 import pygame
 import pygame_menu
-import mainGame
 import loadConfig
 import skirmishMenu
-import maps
 
 pygame.init()
 

@@ -104,7 +104,6 @@ def drawRows(screen, rows, columnStartPosandSizeDict, currentRowYPos, columnType
             calcedSize = checkTextSize(str(value), 25, 10)
             buttonCalcedSize = (columnStartPosandSizeDict[column][1],calcedSize[1])
             b = drawRowByType(screen, columnTypeDict[column], value, pos, buttonCalcedSize)
-            #b = drawButton(screen, str(value), pos, size=buttonCalcedSize) #x is whatever the x values of the column is , y is calculated
         currentRowYPos = currentRowYPos + b.size[1] - 1
 
 def drawTable(screen, columns, rows, position):
