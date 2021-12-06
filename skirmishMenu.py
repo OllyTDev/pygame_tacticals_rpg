@@ -23,9 +23,11 @@ def main(screen):
 
     myfont = pygame.font.SysFont("Arial", 15)
     screen.fill(colour.LightBlue)
-
-    def intialClassTables():
-        skirmishColumns = [column("Colour",(colour), buffer_X=10), column("Player", buffer_X=75), column("Faction", buffer_X=75), column("Team", buffer_X=50)]
+    
+    tableEmptyValue = [("Colour",(colour.Black)), ("Player", ""), ("Faction", ""), ("Team", "") ]
+    
+    def intialTables():
+        skirmishColumns = [column("Colour",("colour"),buffer_X=10), column("Player", buffer_X=75), column("Faction", buffer_X=75), column("Team", buffer_X=50)]
                     
         values = [("Colour",(colour.Red)), ("Player", "Player1"), ("Faction", "Faction1"), ("Team", "team1") ]
         values2 = [("Colour",(colour.Blue)), ("Player", "Player2"), ("Faction", "Faction2"), ("Team", "team2") ]
@@ -33,7 +35,9 @@ def main(screen):
         row1.addData(values)
         row2 = row()
         row2.addData(values2)
-        rows = [row1, row2]
+        dummyRow = row()
+        dummyRow.addData(tableEmptyValue)
+        rows = [row1, row2, dummyRow, dummyRow]
 
         drawTable(screen, skirmishColumns, rows, (100,100))
         pygame.display.update()
@@ -45,8 +49,7 @@ def main(screen):
 
     global players
     players = 2
-    intialClassTables()
-    #initialTable()
+    intialTables()
     global running
     running = True
     while running:
