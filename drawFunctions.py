@@ -87,7 +87,7 @@ def drawRowByType(screen, columnType, value, pos, buttonSize):
     if (columnType == "colour"):
         b = drawOutlineRect(screen, pos, colour.Black, size=buttonSize) #Draw the rect button behind it
         if (value != colour.Black):
-            drawOutlineRect(screen, (pos[0]+2, pos[1]+2), value, size=(buttonSize[0]-2, buttonSize[1]-2), width=0) #-2 cus we want it smaller
+            drawOutlineRect(screen, (pos[0]+2, pos[1]+2), value, size=(buttonSize[0]-3, buttonSize[1]-3), width=0) #-3 cus we want it smaller
         else:    
             drawButton(screen, "N/A", pos, size=buttonSize)
     elif (columnType == "str"):
@@ -102,7 +102,7 @@ def drawRows(screen, rows, columnStartPosandSizeDict, currentRowYPos, columnType
         for column, value in row.data.items():
             pos = [columnStartPosandSizeDict[column][0], currentRowYPos] 
             calcedSize = checkTextSize(str(value), 25, 10)
-            buttonCalcedSize = (columnStartPosandSizeDict[column][1],calcedSize[1])
+            buttonCalcedSize = (columnStartPosandSizeDict[column][1]-1,calcedSize[1])
             b = drawRowByType(screen, columnTypeDict[column], value, pos, buttonCalcedSize)
         currentRowYPos = currentRowYPos + b.size[1] - 1
 

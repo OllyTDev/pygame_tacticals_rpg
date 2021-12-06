@@ -11,6 +11,9 @@ from pygame.locals import (
 
 pygame.init()
 
+def extractFromTable(): #should return: players & team
+    pass
+
 def start(screen):
     mainGame.main(screen, maps.sandMap)
     #mainGame.main(screen, maps.grassMap)
@@ -20,7 +23,7 @@ def quit():
     running = False
 
 def main(screen):
-    
+
     screen.fill(colour.LightBlue)
     
     tableEmptyValue = [("Colour",(colour.Black)), ("Player", ""), ("Faction", ""), ("Team", "") ]
@@ -38,7 +41,7 @@ def main(screen):
         dummyRow.addData(tableEmptyValue)
         rows = [row1, row2, dummyRow, dummyRow]
 
-        drawTable(screen, skirmishColumns, rows, (100,100))
+        drawTable(screen, skirmishColumns, rows, (25,150))
         pygame.display.update()
 
 
