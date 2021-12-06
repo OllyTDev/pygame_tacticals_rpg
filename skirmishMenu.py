@@ -11,6 +11,8 @@ from pygame.locals import (
 
 pygame.init()
 
+def findCellClicked(pos):
+    pass
 
 def extractFromTable(rows):
     players = []
@@ -85,5 +87,10 @@ def main(screen):
                     start(screen, rows)    
                 for b in buttons:
                     if b.collidepoint(pos):
-                        print("found a button!")
+                        print("found a button @", pos)
+                        findCellClicked(pos)
+                        #pos[0] (x value) -> tells us which player data we're changing
+                        #pos[1] (y value) -> tells us which column you're changing
+                        #display options, user selects option
+                        #then updateTable()
                         print("Now can you tell me which button?")
