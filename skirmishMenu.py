@@ -1,6 +1,7 @@
 import pygame
 import mainGame
 import maps
+import math
 from classes import Player, colour
 from drawFunctions import column, row, drawButton, drawTable
 from pygame.locals import (
@@ -11,8 +12,29 @@ from pygame.locals import (
 
 pygame.init()
 
-def findCellClicked(pos):
-    pass
+def findCellClicked(cellNumber):
+    columnClicked = ""
+    rowClicked = ""
+
+    if (cellNumber % 4 == 1):
+        columnClicked = 1
+    elif (cellNumber % 4 == 2):
+        columnClicked = 2 
+    elif (cellNumber % 4 == 3):
+        columnClicked = 3
+    elif (cellNumber % 4 == 0):
+        columnClicked = 4
+
+    if (math.ceil(cellNumber / 4) == 1):
+        rowClicked = 1
+    elif (math.ceil(cellNumber / 4) == 2):
+        rowClicked = 2  
+    elif (math.ceil(cellNumber / 4) == 3):
+        rowClicked = 3
+    elif (math.ceil(cellNumber / 4) == 4):
+        rowClicked = 4   
+
+    return (rowClicked, columnClicked)
 
 def extractFromTable(rows):
     players = []
@@ -84,13 +106,10 @@ def main(screen):
                 if backButton.collidepoint(pos):
                     quit()
                 elif startButton.collidepoint(pos):
-                    start(screen, rows)    
+                    start(screen, rows)  
+                i = 0      
                 for b in buttons:
+                    i = i + 1
                     if b.collidepoint(pos):
-                        print("found a button @", pos)
-                        findCellClicked(pos)
-                        #pos[0] (x value) -> tells us which player data we're changing
-                        #pos[1] (y value) -> tells us which column you're changing
-                        #display options, user selects option
-                        #then updateTable()
-                        print("Now can you tell me which button?")
+                        buttonClicked = findCellClicked(i)
+                        print(buttonClicked)
