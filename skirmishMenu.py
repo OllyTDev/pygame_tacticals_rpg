@@ -52,9 +52,9 @@ def main(screen):
         
         rows = [row1, row2, dummyRow, dummyRow]
 
-        drawTable(screen, skirmishColumns, rows, (25,150))
+        buttons = drawTable(screen, skirmishColumns, rows, (25,150))
         pygame.display.update()
-        return rows
+        return (rows, buttons)
 
 
     defaultButtonSize = [200, 35]
@@ -63,7 +63,9 @@ def main(screen):
 
     global players
     players = 2
-    rows = intialTables()
+    rowsAndRects = intialTables()
+    rows = rowsAndRects[0]
+    buttons = rowsAndRects[1]
     global running
     running = True
     while running:
@@ -81,10 +83,7 @@ def main(screen):
                     quit()
                 elif startButton.collidepoint(pos):
                     start(screen, rows)    
-                #for b in buttons:
-                #    if b.collidepoint(pos):
-                #        print("found a button?")
-    
-        
-
-
+                for b in buttons:
+                    if b.collidepoint(pos):
+                        print("found a button!")
+                        print("Now can you tell me which button?")

@@ -65,10 +65,9 @@ class column():
         self.buffer_X = buffer_X
         self.buffer_Y = buffer_Y
 
-def drawHeaders(screen, columns, position, currentXDrawPos, columnStartandSize_X, buttons):
+def drawHeaders(screen, columns, position, currentXDrawPos, columnStartandSize_X):
     for column in columns:
         b = drawButton(screen, column.header, (currentXDrawPos, position[1]), buffer_X=column.buffer_X, buffer_Y=column.buffer_Y)
-        buttons.append(b)
         columnStartandSize_X.update({column.header: (currentXDrawPos, b.width)}) # Gonna give us data like: colour: 185 & faction: 491
         currentXDrawPos = currentXDrawPos + b.size[0] - 1
     currentRowYPos = position[1] + b.size[1] - 1
@@ -97,13 +96,16 @@ def drawRowByType(screen, columnType, value, pos, buttonSize):
     return b
 
 def drawRows(screen, rows, columnStartPosandSizeDict, currentRowYPos, columnTypeDict):
+    buttons = []
     for row in rows:
         for column, value in row.data.items():
             pos = [columnStartPosandSizeDict[column][0], currentRowYPos] 
             calcedSize = checkTextSize(str(value), 25, 10)
             buttonCalcedSize = (columnStartPosandSizeDict[column][1]-1,calcedSize[1])
             b = drawRowByType(screen, columnTypeDict[column], value, pos, buttonCalcedSize)
+            buttons.append(b)
         currentRowYPos = currentRowYPos + b.size[1] - 1
+    return buttons    
 
 def drawTable(screen, columns, rows, position):
     """
@@ -130,12 +132,12 @@ def drawTable(screen, columns, rows, position):
     columnStartPosandSizeDict = {}
     buttons = []
     
-    currentRowYPos = drawHeaders(screen, columns, position, currentXDrawPos, columnStartPosandSizeDict, buttons)
+    currentRowYPos = drawHeaders(screen, columns, position, currentXDrawPos, columnStartPosandSizeDict)
 
     columnTypeDict = {}
     for column in columns:
         columnTypeDict.update({column.header: column.type})
 
-    drawRows(screen, rows, columnStartPosandSizeDict, currentRowYPos, columnTypeDict)
-
+    buttons = drawRows(screen, rows, columnStartPosandSizeDict, currentRowYPos, columnTypeDict)
+    return buttons
 
