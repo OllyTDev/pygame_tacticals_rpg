@@ -176,11 +176,11 @@ def checkNewCursorPos(pos):
     return pos
 
 
-def main(screen, map):
+def main(screen, map, players):
     # Variable to keep the main loop running
 
-    #for p in players:
-    #    print("Player found: ", p)
+    for p in players:
+        print("Player found: ", p)
 
     currentMap = map
 

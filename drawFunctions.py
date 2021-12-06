@@ -65,6 +65,15 @@ class column():
         self.buffer_X = buffer_X
         self.buffer_Y = buffer_Y
 
+def drawHeaders(screen, columns, position, currentXDrawPos, columnStartandSize_X, buttons):
+    for column in columns:
+        b = drawButton(screen, column.header, (currentXDrawPos, position[1]), buffer_X=column.buffer_X, buffer_Y=column.buffer_Y)
+        buttons.append(b)
+        columnStartandSize_X.update({column.header: (currentXDrawPos, b.width)}) # Gonna give us data like: colour: 185 & faction: 491
+        currentXDrawPos = currentXDrawPos + b.size[0] - 1
+    currentRowYPos = position[1] + b.size[1] - 1
+    return currentRowYPos
+
 class row():
     def __init__(self):
         self.data = {}
@@ -73,15 +82,6 @@ class row():
         for pair in keyValues:
             self.data.update({pair[0]:pair[1]})
 
-def drawHeaders(screen, columns, position, currentXDrawPos, columnStartandSize_X, buttons):
-    for column in columns:
-        print("column:", column)
-        b = drawButton(screen, column.header, (currentXDrawPos, position[1]), buffer_X=column.buffer_X, buffer_Y=column.buffer_Y)
-        buttons.append(b)
-        columnStartandSize_X.update({column.header: (currentXDrawPos, b.width)}) # Gonna give us data like: colour: 185 & faction: 491
-        currentXDrawPos = currentXDrawPos + b.size[0] - 1
-    currentRowYPos = position[1] + b.size[1] - 1
-    return currentRowYPos
 
 def drawRowByType(screen, columnType, value, pos, buttonSize):
     if (columnType == "colour"):
@@ -98,7 +98,6 @@ def drawRowByType(screen, columnType, value, pos, buttonSize):
 
 def drawRows(screen, rows, columnStartPosandSizeDict, currentRowYPos, columnTypeDict):
     for row in rows:
-        print("row.data:",row.data)
         for column, value in row.data.items():
             pos = [columnStartPosandSizeDict[column][0], currentRowYPos] 
             calcedSize = checkTextSize(str(value), 25, 10)
@@ -138,6 +137,5 @@ def drawTable(screen, columns, rows, position):
         columnTypeDict.update({column.header: column.type})
 
     drawRows(screen, rows, columnStartPosandSizeDict, currentRowYPos, columnTypeDict)
-
 
 

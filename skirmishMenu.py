@@ -1,7 +1,7 @@
 import pygame
 import mainGame
 import maps
-from classes import colour
+from classes import Player, colour
 from drawFunctions import column, row, drawButton, drawTable
 from pygame.locals import (
     K_ESCAPE,
@@ -11,12 +11,22 @@ from pygame.locals import (
 
 pygame.init()
 
-def extractFromTable(): #should return: players & team
-    pass
 
-def start(screen):
-    mainGame.main(screen, maps.sandMap)
-    #mainGame.main(screen, maps.grassMap)
+def extractFromTable(rows):
+    players = []
+    for row in rows:
+        if (row.data["Player"] != ""):
+            newPlayer = Player(row.data["Player"], row.data["Colour"], row.data["Team"], row.data["Faction"])
+            print("created:", newPlayer.name, "playing as ", newPlayer.faction, "on team ", newPlayer.team, "as colour : ", newPlayer.colour)
+            players.append(newPlayer)
+        else:
+            print("Row empty, skipping.")
+    print(len(players), "players created" )      
+    return players      
+
+def start(screen, rows):
+    players = extractFromTable(rows)
+    mainGame.main(screen, maps.sandMap, players)
 
 def quit():
     global running
@@ -25,24 +35,26 @@ def quit():
 def main(screen):
 
     screen.fill(colour.LightBlue)
-    
-    tableEmptyValue = [("Colour",(colour.Black)), ("Player", ""), ("Faction", ""), ("Team", "") ]
-    
+
     def intialTables():
         skirmishColumns = [column("Colour",("colour"),buffer_X=10), column("Player", buffer_X=75), column("Faction", buffer_X=75), column("Team", buffer_X=50)]
-                    
+        
+        tableEmptyValue = [("Colour",(colour.Black)), ("Player", ""), ("Faction", ""), ("Team", "") ]            
+        dummyRow = row()
+        dummyRow.addData(tableEmptyValue)
+
         values = [("Colour",(colour.Red)), ("Player", "Player1"), ("Faction", "Faction1"), ("Team", "team1") ]
         values2 = [("Colour",(colour.Blue)), ("Player", "Player2"), ("Faction", "Faction2"), ("Team", "team2") ]
         row1 = row()
         row1.addData(values)
         row2 = row()
         row2.addData(values2)
-        dummyRow = row()
-        dummyRow.addData(tableEmptyValue)
+        
         rows = [row1, row2, dummyRow, dummyRow]
 
         drawTable(screen, skirmishColumns, rows, (25,150))
         pygame.display.update()
+        return rows
 
 
     defaultButtonSize = [200, 35]
@@ -51,7 +63,7 @@ def main(screen):
 
     global players
     players = 2
-    intialTables()
+    rows = intialTables()
     global running
     running = True
     while running:
@@ -68,7 +80,7 @@ def main(screen):
                 if backButton.collidepoint(pos):
                     quit()
                 elif startButton.collidepoint(pos):
-                    start(screen)    
+                    start(screen, rows)    
                 #for b in buttons:
                 #    if b.collidepoint(pos):
                 #        print("found a button?")

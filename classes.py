@@ -96,7 +96,8 @@ warrior.printStats()
 
 class Player():
     
-     def __init__(self, name, colour, team):
+     def __init__(self, name, colour, team, faction):
         self.name = name
         self.colour = colour
         self.team = team
+        self.faction = faction
