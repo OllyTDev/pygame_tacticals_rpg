@@ -4,7 +4,7 @@ pygame.init()
 
 class DropDown():
 
-    def __init__(self, color_menu, color_option, x, y, w, h, font, main, options):
+    def __init__(self, color_menu, color_option, x, y, w, h, font, main, options, buttonNumber):
         self.color_menu = color_menu
         self.color_option = color_option
         self.rect = pygame.Rect(x, y, w, h)
@@ -14,6 +14,7 @@ class DropDown():
         self.draw_menu = False
         self.menu_active = False
         self.active_option = -1
+        self.buttonNumber = buttonNumber
 
     def draw(self, surf):
         pygame.draw.rect(surf, self.color_menu[self.menu_active], self.rect, 0)
@@ -52,31 +53,32 @@ class DropDown():
                     return self.active_option
         return -1
 
-screen = pygame.display.set_mode((640, 480))
-list1 = DropDown(
-    [colour.White, colour.Blue],
-    [colour.White, colour.Blue],
-    50, 50, 200, 50, 
-    pygame.font.SysFont(None, 30), 
-    "Select Mode", ["Calibration", "Test"])
-
-clock = pygame.time.Clock()
-run = True
-while run:
-    clock.tick(30)
-
-    event_list = pygame.event.get()
-    for event in event_list:
-        if event.type == pygame.QUIT:
-            run = False
-
-    selected_option = list1.update(event_list)
-    if selected_option >= 0:
-        list1.main = list1.options[selected_option]
-
-    screen.fill((255, 255, 255))
-    list1.draw(screen)
-    pygame.display.flip()
+def main():
+    screen = pygame.display.set_mode((640, 480))
+    list1 = DropDown(
+        [colour.White, colour.SelectionBlue],
+        [colour.White, colour.SelectionBlue],
+        50, 50, 200, 50, 
+        pygame.font.SysFont(None, 30), 
+        "Select Mode", ["Calibration", "Test"], 1)
     
-pygame.quit()
-exit()        
+    clock = pygame.time.Clock()
+    run = True
+    while run:
+        clock.tick(30)
+    
+        event_list = pygame.event.get()
+        for event in event_list:
+            if event.type == pygame.QUIT:
+                run = False
+    
+        selected_option = list1.update(event_list)
+        if selected_option >= 0:
+            list1.main = list1.options[selected_option]
+    
+        screen.fill((255, 255, 255))
+        list1.draw(screen)
+        pygame.display.flip()
+        
+    pygame.quit()
+    exit()

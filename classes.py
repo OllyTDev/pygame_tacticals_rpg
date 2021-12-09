@@ -9,6 +9,7 @@ class colour():
     Red = (255, 0, 0)
     Green = (0, 255, 0)
     Blue = (0, 0, 255)
+    SelectionBlue = (139, 217, 247)
     Yellow = (255, 255, 0)
     BurntUmber = (110,38,14)
     LightBlue = (173,216,230)
