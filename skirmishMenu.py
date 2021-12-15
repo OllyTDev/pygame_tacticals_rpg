@@ -40,8 +40,8 @@ def findCellClicked(cellNumber):
 def extractFromTable(rows):
     players = []
     for row in rows:
-        if (row.data["Player"] != ""):
-            newPlayer = Player(row.data["Player"], row.data["Colour"], row.data["Team"], row.data["Faction"])
+        if (row.dict["Player"] != ""):
+            newPlayer = Player(row.dict["Player"], row.dict["Colour"], row.dict["Team"], row.dict["Faction"])
             print("created:", newPlayer.name, "playing as ", newPlayer.faction, "on team ", newPlayer.team, "as colour : ", newPlayer.colour)
             players.append(newPlayer)
         else:
@@ -51,7 +51,7 @@ def extractFromTable(rows):
 
 def start(screen, rows):
     players = extractFromTable(rows)
-    mainGame.main(screen, maps.sandMap, players)
+    mainGame.main(screen, maps.grassMap, players)
 
 def quit():
     global running
@@ -75,8 +75,9 @@ def setDropDownText(buttonColumn):
         return ""    
 
 def setDropDownOptions(buttonColumn):
+
     if (buttonColumn == 2):
-        return ["Player 1", "Player 2", "Player 3", "Player 4"]
+        return ["Player 3", "Player 4"]
     elif (buttonColumn == 3):
         return ["Warriors", "Thieves", "Mages"]
     elif (buttonColumn == 4):
@@ -111,7 +112,37 @@ def updateDropdown(screen, intialTables, dropDown, event_list):
         intialTables()
         dropDown.main = dropDown.options[selected_option]  
         dropDown.draw(screen)      
+
+def createRowFromDD(ddClicked, ddList, rows):
+    #creates a single row from the dropdown button
+    cell = findCellClicked(ddClicked.buttonNumber)
+    rowSelected = cell[0]
+    columnSelected = cell[1]
+
+    for row in rows:
+        if(rowSelected in row.dict.values()):
+            rowDict = row.dict
+
+    if(columnSelected == 2):
+        for dd in ddList:
+            if (dd.buttonNumber % 4 == 2):
+                dd.options.remove(ddClicked.main) #remove current selected option
+                if (rowDict.get("Player") != "Player" and rowDict.get("Player") != ""):
+                    dd.options.append(rowDict.get("Player")) #add old option back into the list if it's not the defaults
+        rowDict.update({"Player":ddClicked.main})
+        try:
+            ddClicked.options.remove(ddClicked.main)
+        except:
+            print("Not found in table")
+    elif(columnSelected == 3):
+        rowDict.update({"Faction":ddClicked.main})
+    elif(columnSelected== 4):
+        rowDict.update({"Team":ddClicked.main})
+
     
+
+
+
 def main(screen):
 
     screen.fill(colour.LightBlue)
@@ -119,30 +150,29 @@ def main(screen):
     def updateTables(rows):
         skirmishColumns = [column("Colour",("colour"),buffer_X=10), column("Player", buffer_X=75), column("Faction", buffer_X=75), column("Team", buffer_X=50)]
 
-        tableEmptyValue = [("Colour",(colour.Black)), ("Player", ""), ("Faction", ""), ("Team", "") ]            
-        dummyRow = row()
-        dummyRow.addData(tableEmptyValue)
-
         buttons = drawTable(screen, skirmishColumns, rows, (25,150))
         pygame.display.flip()
         return (rows, buttons)
 
 
-    def intialTables():
+    def initialTables():
         skirmishColumns = [column("Colour",("colour"),buffer_X=10), column("Player", buffer_X=75), column("Faction", buffer_X=75), column("Team", buffer_X=50)]
         
-        tableEmptyValue = [("Colour",(colour.Black)), ("Player", ""), ("Faction", ""), ("Team", "") ]            
-        dummyRow = row()
-        dummyRow.addData(tableEmptyValue)
+        tableEmptyValue3 = [("rowNumber", 3),("Colour",(colour.Black)), ("Player", ""), ("Faction", ""), ("Team", "") ]    
+        tableEmptyValue4 = [("rowNumber", 4),("Colour",(colour.Black)), ("Player", ""), ("Faction", ""), ("Team", "") ]           
+        dummyRow3 = row()
+        dummyRow3.addToDict(tableEmptyValue3)
+        dummyRow4 = row()
+        dummyRow4.addToDict(tableEmptyValue4)
 
-        values = [("Colour",(colour.Red)), ("Player", "Player1"), ("Faction", "Faction1"), ("Team", "team1") ]
-        values2 = [("Colour",(colour.Blue)), ("Player", "Player2"), ("Faction", "Faction2"), ("Team", "team2") ]
+        values = [("rowNumber", 1),("Colour",(colour.Red)), ("Player", "Player 1"), ("Faction", "Warrior"), ("Team", "Team 1") ]
+        values2 = [("rowNumber", 2),("Colour",(colour.Blue)), ("Player", "Player 2"), ("Faction", "Mages"), ("Team", "Team 2") ]
         row1 = row()
-        row1.addData(values)
+        row1.addToDict(values)
         row2 = row()
-        row2.addData(values2)
+        row2.addToDict(values2)
         
-        rows = [row1, row2, dummyRow, dummyRow]
+        rows = [row1, row2, dummyRow3, dummyRow4]
 
         buttons = drawTable(screen, skirmishColumns, rows, (25,150))
         pygame.display.flip()
@@ -156,17 +186,18 @@ def main(screen):
 
     global players
     players = 2
-    rowsAndRects = intialTables()
-    rows = rowsAndRects[0]
-    tableRects = rowsAndRects[1]
+    rowsAndRects = initialTables()
+    currentRows = rowsAndRects[0]
+    tableButtons = rowsAndRects[1]
 
-    dropDownList = createDropdowns(tableRects)
+    dropDownList = createDropdowns(tableButtons)
     pygame.display.update()
 
     clock = pygame.time.Clock()
     global running
     running = True
     dropdownClicked = 0
+    ddActive = False
 
     while running:
         clock.tick(10)
@@ -184,26 +215,34 @@ def main(screen):
                 if backButton.collidepoint(pos):
                     quit()
                 elif startButton.collidepoint(pos):
-                    start(screen, rows)  
-                i = 0      
-                for b in tableRects:
-                    i = i + 1
-                    if b.collidepoint(pos):
-                        buttonClicked = findCellClicked(i)
-                        print(buttonClicked)
-                        if (buttonClicked[1] != 1):
-                            for dd in dropDownList:
-                                if (dd.buttonNumber == i):
-                                    dropdownClicked = dd
+                    start(screen, currentRows)  
+                i = 0
+                if not ddActive:      
+                    for b in tableButtons:
+                        # Did the user click in the table. If so...
+                        i = i + 1
+                        if b.collidepoint(pos): 
+                            # Find which cell they clicked and...
+                            buttonClicked = findCellClicked(i) 
+                            print(buttonClicked)
+                            if (buttonClicked[1] != 1):
+                                # If appropriate, (not in column 1) active the stuff for a drop down menu to appear at the correct location
+                                for dd in dropDownList:
+                                    if (dd.buttonNumber == i):
+                                        dropdownClicked = dd
+                                        ddActive = True
 
         if (dropdownClicked != 0):
             selected_option = dropdownClicked.update(event_list)
             if selected_option >= 0:
-                dropdownClicked.main = dropdownClicked.options[selected_option] 
+                dropdownClicked.main = dropdownClicked.options[selected_option]
+                createRowFromDD(dropdownClicked, dropDownList, currentRows)
+                ddActive = False
         
         if (dropdownClicked != 0):
             initialSkirmishUI(screen)  
-            intialTables()
+            updateTables(currentRows)
             dropdownClicked.draw(screen)
+
         pygame.display.flip() 
                 

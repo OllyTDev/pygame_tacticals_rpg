@@ -75,11 +75,11 @@ def drawHeaders(screen, columns, position, currentXDrawPos, columnStartandSize_X
 
 class row():
     def __init__(self):
-        self.data = {}
+        self.dict = {}
 
-    def addData(self,keyValues):
+    def addToDict(self, keyValues):
         for pair in keyValues:
-            self.data.update({pair[0]:pair[1]})
+            self.dict.update({pair[0]:pair[1]})
 
 
 def drawRowByType(screen, columnType, value, pos, buttonSize):
@@ -98,12 +98,16 @@ def drawRowByType(screen, columnType, value, pos, buttonSize):
 def drawRows(screen, rows, columnStartPosandSizeDict, currentRowYPos, columnTypeDict):
     buttons = []
     for row in rows:
-        for column, value in row.data.items():
-            pos = [columnStartPosandSizeDict[column][0], currentRowYPos] 
-            calcedSize = checkTextSize(str(value), 25, 10)
-            buttonCalcedSize = (columnStartPosandSizeDict[column][1]-1,calcedSize[1])
-            b = drawRowByType(screen, columnTypeDict[column], value, pos, buttonCalcedSize)
-            buttons.append(b)
+        for column, value in row.dict.items():
+            try: 
+                (columnStartPosandSizeDict[column])
+                pos = [columnStartPosandSizeDict[column][0], currentRowYPos] 
+                calcedSize = checkTextSize(str(value), 25, 10)
+                buttonCalcedSize = (columnStartPosandSizeDict[column][1]-1,calcedSize[1])
+                b = drawRowByType(screen, columnTypeDict[column], value, pos, buttonCalcedSize)
+                buttons.append(b)
+            except:
+                print("column not found, skipping...")    
         currentRowYPos = currentRowYPos + b.size[1] - 1
     return buttons    
 
