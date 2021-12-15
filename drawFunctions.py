@@ -107,7 +107,7 @@ def drawRows(screen, rows, columnStartPosandSizeDict, currentRowYPos, columnType
                 b = drawRowByType(screen, columnTypeDict[column], value, pos, buttonCalcedSize)
                 buttons.append(b)
             except:
-                print("column not found, skipping...")    
+                "column not found, skipping..."    
         currentRowYPos = currentRowYPos + b.size[1] - 1
     return buttons    
 

@@ -1,4 +1,5 @@
 import pygame
+from pygame import draw
 import mainGame
 import maps
 import math
@@ -57,9 +58,10 @@ def quit():
     global running
     running = False
 
-def initialSkirmishUI(screen):
+def initialSkirmishUI(screen, tableButtons):
     screen.fill(colour.LightBlue)
     defaultButtonSize = [200, 35]
+    drawCrosses(screen, tableButtons)
     drawButton(screen, "Start", (500, 500), size = defaultButtonSize)
     drawButton(screen, "Back",  (100, 500), size = defaultButtonSize)
     pygame.display.flip()
@@ -133,15 +135,21 @@ def createRowFromDD(ddClicked, ddList, rows):
         try:
             ddClicked.options.remove(ddClicked.main)
         except:
-            print("Not found in table")
+            "Not found in table"
     elif(columnSelected == 3):
         rowDict.update({"Faction":ddClicked.main})
     elif(columnSelected== 4):
         rowDict.update({"Team":ddClicked.main})
 
-    
-
-
+def drawCrosses(screen, tableButtons):
+    i = 0
+    crossList = []
+    for b in tableButtons:
+        i = i + 1
+        if (i % 4 == 0):
+            crossButtonNo = i/4
+            crossList.append((crossButtonNo, drawButton(screen, "X", (b.x+110,b.y))))
+    return crossList        
 
 def main(screen):
 
@@ -189,6 +197,7 @@ def main(screen):
     rowsAndRects = initialTables()
     currentRows = rowsAndRects[0]
     tableButtons = rowsAndRects[1]
+    crossButtonList = drawCrosses(screen, tableButtons) #Tuple (buttonNumber, rect)
 
     dropDownList = createDropdowns(tableButtons)
     pygame.display.update()
@@ -215,8 +224,12 @@ def main(screen):
                 if backButton.collidepoint(pos):
                     quit()
                 elif startButton.collidepoint(pos):
-                    start(screen, currentRows)  
+                    start(screen, currentRows)
                 i = 0
+                for b in crossButtonList:
+                    if b[1].collidepoint(pos):
+                            #clear the data for that row
+                            print("cross button", b[0], " pressed")
                 if not ddActive:      
                     for b in tableButtons:
                         # Did the user click in the table. If so...
@@ -238,11 +251,15 @@ def main(screen):
                 dropdownClicked.main = dropdownClicked.options[selected_option]
                 createRowFromDD(dropdownClicked, dropDownList, currentRows)
                 ddActive = False
+                initialSkirmishUI(screen, tableButtons)  
+                updateTables(currentRows)
+                dropdownClicked.draw(screen)
         
-        if (dropdownClicked != 0):
-            initialSkirmishUI(screen)  
+        if (ddActive):
+            initialSkirmishUI(screen, tableButtons)  
             updateTables(currentRows)
             dropdownClicked.draw(screen)
 
         pygame.display.flip() 
+
                 
