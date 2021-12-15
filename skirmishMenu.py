@@ -148,8 +148,29 @@ def drawCrosses(screen, tableButtons):
         i = i + 1
         if (i % 4 == 0):
             crossButtonNo = i/4
-            crossList.append((crossButtonNo, drawButton(screen, "X", (b.x+110,b.y))))
+            crossList.append((int(crossButtonNo), drawButton(screen, "X", (b.x+110,b.y))))
     return crossList        
+
+def clearRow(rowNumberToClear, rowList, ddList):
+    
+
+    for row in rowList:
+        if(rowNumberToClear in row.dict.values()):
+            rowDict = row.dict #find row
+            
+            for dd in ddList: #Add row back to list
+                if (dd.buttonNumber % 4 == 2):
+                    if (rowDict.get("Player") != "Player" and rowDict.get("Player") != ""):
+                        dd.options.append(rowDict.get("Player"))
+
+            #clear row
+            rowDict.update({"Colour":colour.Black})
+            rowDict.update({"Player":""})
+            rowDict.update({"Faction":""})
+            rowDict.update({"Team":""})
+    return rowList
+
+
 
 def main(screen):
 
@@ -198,7 +219,6 @@ def main(screen):
     currentRows = rowsAndRects[0]
     tableButtons = rowsAndRects[1]
     crossButtonList = drawCrosses(screen, tableButtons) #Tuple (buttonNumber, rect)
-
     dropDownList = createDropdowns(tableButtons)
     pygame.display.update()
 
@@ -228,16 +248,16 @@ def main(screen):
                 i = 0
                 for b in crossButtonList:
                     if b[1].collidepoint(pos):
-                            #clear the data for that row
-                            print("cross button", b[0], " pressed")
+                            currentRows = clearRow(b[0], currentRows, dropDownList)
+                            initialSkirmishUI(screen, tableButtons)  
+                            updateTables(currentRows)
                 if not ddActive:      
                     for b in tableButtons:
                         # Did the user click in the table. If so...
                         i = i + 1
                         if b.collidepoint(pos): 
                             # Find which cell they clicked and...
-                            buttonClicked = findCellClicked(i) 
-                            print(buttonClicked)
+                            buttonClicked = findCellClicked(i)
                             if (buttonClicked[1] != 1):
                                 # If appropriate, (not in column 1) active the stuff for a drop down menu to appear at the correct location
                                 for dd in dropDownList:
