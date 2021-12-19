@@ -1,3 +1,4 @@
+from pygame import draw
 from pygame.constants import K_DOWN, K_LEFT, K_RETURN, K_RIGHT, K_UP, K_a, K_d, K_s, K_w
 import loadConfig
 from classes import colour
@@ -95,23 +96,56 @@ def createMapLists():
     yList = list(dict.fromkeys(tempYList))
 
 def startTurns(screen, starting_player):
-    playerText = gameFont.render("Player {0}".format(str(starting_player)), 1, colour.BurntUmber)
+    """
+    Starts and renders the current player button. 
+    
+    Parameters
+    ---------
+    Screen: Screen
+        The screen to render on
+
+    Starting player: player
+        Starting player stored as a classes.player    
+    """
+    playerText = gameFont.render(starting_player.name, 1, colour.BurntUmber)
     pygame.draw.rect(screen, (colour.Black), (50, 5, 200, 35), 2)
     pygame.display.update()
     screen.blit(playerText, (75,10))   
     pygame.display.update()
 
-def changeTurns(screen, currentPlayersTurn, maxPlayers=2):
+def changeTurns(screen, currentPlayersTurn, players):
+    """
+    Finds the current player in the list and then iterates to the next player in the list and renders the next player.
+    If the player is last in the list, it should loop around the list and draw player 1 again.
     
+    Parameters
+    ---------
+    Screen: Screen
+        The screen to render on
+
+    currentPlayersTurn: player
+        current players whos turn it currently is stored as a classes.player
+
+    players: List[player]
+        list of current games players 
+    """
     pygame.draw.rect(screen, (colour.White), (50, 5, 200, 35), 0)
     pygame.draw.rect(screen, (colour.Black), (50, 5, 200, 35), 2)
     pygame.display.update()
-    if (currentPlayersTurn == maxPlayers):
-        nextPlayersTurn = 1
-    else:
-        nextPlayersTurn = currentPlayersTurn + 1    
-
-    playerText = gameFont.render("Player {0}".format(str(nextPlayersTurn)), 1, colour.BurntUmber)
+    drawPlayer = False
+    drawn = False
+    while (drawn == False):
+        for p in players:
+            if (drawPlayer == True and drawn == False): 
+                #if found the current player in the list AND we haven't drawn a new label yet, draw the next player
+                print("drawing p.name: ", p.name)
+                playerText = gameFont.render(p.name, 1, colour.BurntUmber)
+                nextPlayersTurn = p
+                drawn = True
+            elif (p == currentPlayersTurn): 
+                #if find current player
+                drawPlayer = True
+                #mark the next player to be drawn
     screen.blit(playerText, (75,10))
     pygame.display.update()
     return nextPlayersTurn
@@ -178,10 +212,6 @@ def checkNewCursorPos(pos):
 
 def main(screen, map, players):
     # Variable to keep the main loop running
-
-    for p in players:
-        print("Player found: ", p)
-
     currentMap = map
 
     tiles = loadMap(screen, currentMap)
@@ -191,9 +221,10 @@ def main(screen, map, players):
     nextTurnButton = drawButton(screen, "Next Turn", nextTurnButtonPosition, textColour=colour.BurntUmber, size=nextTurnButtonSize)
     pygame.display.update()
 
-    currentPlayersTurn = 1
+    currentPlayersTurn = players[0]
     startTurns(screen, currentPlayersTurn)
-    
+    maxPlayers = len(players)
+
     cursorPos = initializeCursor(screen)
     pygame.display.update()
 
@@ -253,4 +284,4 @@ def main(screen, map, players):
                 pos = pygame.mouse.get_pos()
                 print("Left mouse released!")
                 if nextTurnButton.collidepoint(pos):
-                    currentPlayersTurn = changeTurns(screen, currentPlayersTurn)
+                    currentPlayersTurn = changeTurns(screen, currentPlayersTurn, players)
