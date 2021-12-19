@@ -49,12 +49,13 @@ class Map:
         self.tileArray = tileArray
 
 class Interactable:
-    def __init__(self, name, hp=0, att=0, defence=0, location=[]):
+    def __init__(self, name, hp=0, att=0, defence=0, location=[], image="Asset/Units/BlankUnitFront.png"):
         self.name = name
         self.baseHP = hp
         self.baseAtt = att
         self.baseDef = defence
         self.location = location
+        self.image = image
 
     def printStats(self):
         print("[ Stats of " + self.name + " ]",
@@ -72,7 +73,7 @@ class Building(Interactable):
         Interactable.__init__(self, name, hp, att, defence, location)
         self.xSize = xSize
         self.ySize = ySize
-        self.size = [xSize, ySize] 
+        self.size = [xSize, ySize]
 
 
     

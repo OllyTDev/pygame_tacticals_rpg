@@ -22,6 +22,8 @@ xRight = loadConfig.SCREEN_WIDTH-50
 yTop = 50
 yBottom = loadConfig.SCREEN_HEIGHT-50
 
+baseUnit_ani = [pygame.image.load("Asset/Units/BlankUnitFrontFrame1.png"), pygame.image.load("Asset/Units/BlankUnitFrontFrame2.png")]
+
 def findCoordinate(coordinateList, target):
     i = 0
     revList = list(reversed(coordinateList))
@@ -206,7 +208,6 @@ def checkNewCursorPos(pos):
     elif (yPos > mapBottom):
         #going off bottom of screen   
         pos = [xPos, mapBottom]
-
     return pos
 
 
@@ -223,7 +224,6 @@ def main(screen, map, players):
 
     currentPlayersTurn = players[0]
     startTurns(screen, currentPlayersTurn)
-    maxPlayers = len(players)
 
     cursorPos = initializeCursor(screen)
     pygame.display.update()
