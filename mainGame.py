@@ -1,7 +1,7 @@
 from pygame import draw
 from pygame.constants import K_DOWN, K_LEFT, K_RETURN, K_RIGHT, K_UP, K_a, K_d, K_s, K_w
 import loadConfig
-from classes import colour
+from classes import Player, colour, Unit
 import pygame
 from drawFunctions import drawButton
 from pygame.locals import (
@@ -23,6 +23,15 @@ yTop = 50
 yBottom = loadConfig.SCREEN_HEIGHT-50
 
 baseUnit_ani = [pygame.image.load("Asset/Units/BlankUnitFrontFrame1.png"), pygame.image.load("Asset/Units/BlankUnitFrontFrame2.png")]
+
+def getPosFromTileLocation(tileTuple):
+    """
+    Takes a tileTuple e.g. [1,1] and gives us the position of the tile [1,1]
+    """
+    xPos = xList[tileTuple[0]]
+    yPos = yList[tileTuple[1]]
+
+    return [xPos, yPos]
 
 def findCoordinate(coordinateList, target):
     i = 0
@@ -210,6 +219,52 @@ def checkNewCursorPos(pos):
         pos = [xPos, mapBottom]
     return pos
 
+def drawUnits(screen, unitList):
+
+    for unit in unitList:
+        unitPos = getPosFromTileLocation(unit.location)
+        unitImage = pygame.image.load(unit.image)
+        screen.blit(unitImage, unitPos)
+
+def spawnUnits(players):
+    unitList = []
+    baseUnitImageList = ["Asset/Units/BlankUnitFrontFrame1.png", "Asset/Units/BlankUnitFrontFrame2.png"]
+    i = 0
+    for p in players:
+        i = i + 1
+        if (i == 1):
+            starterUnit = Unit("Warrior", hp=50, att=20, defence=25, location=[1,1], imageList=baseUnitImageList, player=p)
+        elif (i == 2):
+            starterUnit = Unit("Warrior", hp=50, att=20, defence=25, location=[10,1], imageList=baseUnitImageList, player=p)
+        elif (i == 3):
+            starterUnit = Unit("Warrior", hp=50, att=20, defence=25, location=[1,8], imageList=baseUnitImageList, player=p)
+        elif (i == 4):
+            starterUnit = Unit("Warrior", hp=50, att=20, defence=25, location=[10,8], imageList=baseUnitImageList, player=p)              
+        unitList.append(starterUnit)
+
+    return unitList    
+
+
+def redrawMap(screen, currentMap, cursorPos, unitList, newPos, changeSquare=False):
+    redrawTile(screen, cursorPos, currentMap)
+    drawUnits(screen, unitList)
+    if (changeSquare):
+        change_square(screen, *cursorPos)   
+    redrawCursor(screen, newPos)
+
+def redrawMapAfterClick(screen, currentMap, unitList, cursorPos, squareClicked):
+    redrawTile(screen, cursorPos, currentMap)
+    drawUnits(screen, unitList)
+    change_square(screen,*squareClicked)
+    redrawCursor(screen, squareClicked)
+
+def isCursorOverUnit(cursorPos, unitList, redrawMap):
+    for unit in unitList:
+        unitPos = getPosFromTileLocation(unit.location)
+        if(cursorPos == unitPos):
+            redrawMap
+            unit.update()
+
 
 def main(screen, map, players):
     # Variable to keep the main loop running
@@ -225,7 +280,11 @@ def main(screen, map, players):
     currentPlayersTurn = players[0]
     startTurns(screen, currentPlayersTurn)
 
+    unitList = spawnUnits(players)
+    drawUnits(screen, unitList)
+
     cursorPos = initializeCursor(screen)
+    newPos = cursorPos
     pygame.display.update()
 
     running = True
@@ -240,29 +299,23 @@ def main(screen, map, players):
                     running = False
                 elif event.key == K_UP or event.key == K_w:
                     newPos = checkNewCursorPos([cursorPos[0],cursorPos[1]-50])
-                    redrawTile(screen, cursorPos, currentMap)
-                    redrawCursor(screen, newPos)
+                    redrawMap(screen, currentMap, cursorPos, unitList, newPos)
                     cursorPos = newPos
                 elif event.key == K_DOWN or event.key == K_s:  
                     newPos = checkNewCursorPos([cursorPos[0],cursorPos[1]+50])
-                    redrawTile(screen, cursorPos, currentMap)
-                    redrawCursor(screen, newPos)
+                    redrawMap(screen, currentMap, cursorPos, unitList, newPos)
                     cursorPos = newPos
                 elif event.key == K_LEFT or event.key == K_a:
                     newPos = checkNewCursorPos([cursorPos[0]-50,cursorPos[1]])
-                    redrawTile(screen, cursorPos, currentMap)
-                    redrawCursor(screen, newPos)
+                    redrawMap(screen, currentMap, cursorPos, unitList, newPos)
                     cursorPos = newPos
                 elif event.key == K_RIGHT or event.key == K_d:
                     newPos = checkNewCursorPos([cursorPos[0]+50,cursorPos[1]])
-                    redrawTile(screen, cursorPos, currentMap)
-                    redrawCursor(screen, newPos)
+                    redrawMap(screen, currentMap, cursorPos, unitList, newPos)
                     cursorPos = newPos
                 elif event.key == K_RETURN:
                     newPos = cursorPos
-                    redrawTile(screen, cursorPos, currentMap)
-                    change_square(screen, *cursorPos)
-                    redrawCursor(screen, newPos)
+                    redrawMap(screen, currentMap, cursorPos, unitList, newPos, changeSquare=True)
                     cursorPos = newPos
             # Did the user click the window close button? If so, stop the loop.
             elif event.type == QUIT:
@@ -276,12 +329,11 @@ def main(screen, map, players):
                     if t.collidepoint(pos):
                         squareClicked = findSquareMouseIsOn(pos)
                         print("squareClicked: ", str(squareClicked))
-                        redrawTile(screen, cursorPos, currentMap)
-                        change_square(screen,*squareClicked)
-                        redrawCursor(screen, squareClicked)
+                        redrawMapAfterClick(screen, currentMap, unitList, cursorPos, squareClicked)
                         cursorPos = squareClicked
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                 pos = pygame.mouse.get_pos()
                 print("Left mouse released!")
                 if nextTurnButton.collidepoint(pos):
-                    currentPlayersTurn = changeTurns(screen, currentPlayersTurn, players)
+                    currentPlayersTurn = changeTurns(screen, currentPlayersTurn, players)          
+        isCursorOverUnit(cursorPos, unitList, redrawMap(screen, currentMap, cursorPos, unitList, newPos))

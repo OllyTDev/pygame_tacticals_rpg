@@ -1,4 +1,5 @@
 
+from pygame import image
 import terrains
 # Tiles & Map 
 # Units and buildings
@@ -49,13 +50,15 @@ class Map:
         self.tileArray = tileArray
 
 class Interactable:
-    def __init__(self, name, hp=0, att=0, defence=0, location=[], image="Asset/Units/BlankUnitFront.png"):
+    def __init__(self, name, hp=0, att=0, defence=0, location=[], startImage="Asset/Units/BlankUnitFrontFrame1.png", imageList=["Asset/Units/BlankUnitFrontFrame1.png"], player=0):
         self.name = name
         self.baseHP = hp
         self.baseAtt = att
         self.baseDef = defence
         self.location = location
-        self.image = image
+        self.image = startImage
+        self.imageList = imageList
+        self.player = player
 
     def printStats(self):
         print("[ Stats of " + self.name + " ]",
@@ -69,8 +72,8 @@ class Interactable:
 
 
 class Building(Interactable):
-    def __init__(self, name, xSize, ySize, hp=0, att=0, defence=0, location=[]):
-        Interactable.__init__(self, name, hp, att, defence, location)
+    def __init__(self, name, xSize, ySize, hp=0, att=0, defence=0, location=[], startImage="Asset/Units/BlankUnitFrontFrame1.png", imageList=[], player=0):
+        Interactable.__init__(self, name, hp, att, defence, location, startImage, imageList, player)
         self.xSize = xSize
         self.ySize = ySize
         self.size = [xSize, ySize]
@@ -86,12 +89,23 @@ print("castle location: " + str(castle.location))
 
 
 class Unit(Interactable):
-    def __init__(self, name,hp=0, att=0, defence=0, location=[]):
-        Interactable.__init__(self, name, hp, att, defence, location)
+    def __init__(self, name,hp=0, att=0, defence=0, location=[], startImage="Asset/Units/BlankUnitFrontFrame1.png", imageList=[], player=0):
+        Interactable.__init__(self, name, hp, att, defence, location, startImage, imageList, player)
         self.abilities = []
+        self.move_frame = 0
+        
 
     def add_ability(self, ability):
         self.abilities.append(ability)
+
+    def update(self):
+         # Return to base frame if at end of movement sequence 
+        if self.move_frame >= len(self.imageList):
+            self.move_frame = 0
+            return
+        # Move the character to the next frame if conditions are met
+        self.image = self.imageList[int(self.move_frame)]
+        self.move_frame += 0.001      
 
 warrior = Unit("Warrior", hp=50, att=20, defence=25)
 warrior.printStats()
