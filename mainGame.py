@@ -183,7 +183,6 @@ def initializeCursor(screen):
 
 
 def redrawTile(screen, pos, map):
-    
     #from oldPos, find tile, find tile image, fill in tile with tile image
     tile = findTileOnMap(pos, map)
     tileImage = pygame.image.load(tile.terrain.image)
@@ -197,7 +196,6 @@ def redrawCursor(screen, newPos):
     return newPos
 
 def checkNewCursorPos(pos):
-    
     xPos = pos[0]
     yPos = pos[1]
     global xLeft, xRight, yTop, yBottom
@@ -220,15 +218,17 @@ def checkNewCursorPos(pos):
     return pos
 
 def drawUnits(screen, unitList):
-
     for unit in unitList:
+        surf = pygame.Surface((10, 10))
+        surf.fill(unit.player.colour)
         unitPos = getPosFromTileLocation(unit.location)
         unitImage = pygame.image.load(unit.image)
         screen.blit(unitImage, unitPos)
+        screen.blit(surf,(unitPos[0]+35, unitPos[1]+5))
 
 def spawnUnits(players):
     unitList = []
-    baseUnitImageList = ["Asset/Units/BlankUnitFrontFrame1.png", "Asset/Units/BlankUnitFrontFrame2.png"]
+    baseUnitImageList = ["Asset/Units/BlankUnitFrontFrame1V2.png", "Asset/Units/BlankUnitFrontFrame2V2.png"]
     i = 0
     for p in players:
         i = i + 1
@@ -258,7 +258,7 @@ def redrawMapAfterClick(screen, currentMap, unitList, cursorPos, squareClicked):
     change_square(screen,*squareClicked)
     redrawCursor(screen, squareClicked)
 
-def isCursorOverUnit(cursorPos, unitList, redrawMap):
+def unitAnimationOnCursorHover(cursorPos, unitList, redrawMap):
     for unit in unitList:
         unitPos = getPosFromTileLocation(unit.location)
         if(cursorPos == unitPos):
@@ -287,6 +287,8 @@ def main(screen, map, players):
     newPos = cursorPos
     pygame.display.update()
 
+    selected = False
+
     running = True
     # Main loop
     while running:
@@ -314,6 +316,7 @@ def main(screen, map, players):
                     redrawMap(screen, currentMap, cursorPos, unitList, newPos)
                     cursorPos = newPos
                 elif event.key == K_RETURN:
+                    selected = True
                     newPos = cursorPos
                     redrawMap(screen, currentMap, cursorPos, unitList, newPos, changeSquare=True)
                     cursorPos = newPos
@@ -335,5 +338,6 @@ def main(screen, map, players):
                 pos = pygame.mouse.get_pos()
                 print("Left mouse released!")
                 if nextTurnButton.collidepoint(pos):
-                    currentPlayersTurn = changeTurns(screen, currentPlayersTurn, players)          
-        isCursorOverUnit(cursorPos, unitList, redrawMap(screen, currentMap, cursorPos, unitList, newPos))
+                    currentPlayersTurn = changeTurns(screen, currentPlayersTurn, players)
+        if (selected == False):
+            unitAnimationOnCursorHover(cursorPos, unitList, redrawMap(screen, currentMap, cursorPos, unitList, newPos))
